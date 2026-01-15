@@ -38,161 +38,267 @@ let partialResult = document.getElementById('partial-result')
 let deleteBtn = document.getElementById('delete-btn')
 let calculatorKeys = document.querySelector('.calculator-keys')
 
-// Removes the last character of the equation and updates partialResult
-deleteBtn.addEventListener('click', () => {
-    equationDisplay.value = equationDisplay.value.slice(0, -1)
-    partialUpdater()
-})
-// Defines keys behaviour
-calculatorKeys.addEventListener('click', function (event) {
-    const target = event.target
-    const targetValue = target.value
-    const lastChar = equationDisplay.value.slice(-1)
+// ALMACENAMIENTO DEL HISTORIAL CON IndexedDB
+let db
 
-    if (!target.classList.contains('key')) return // Prevents behaviour when clicking outside of keys area
+window.onload = function () {
+    // Open our database
+    let request = window.indexedDB.open('history', 1)
+    // Event handlers
+    request.onerror = function () {
+        console.log('The database could not be opened')
+    }
+    request.onsuccess = function () {
+        console.log('Database opened successfully')
+        db = request.result
 
-    // Clears both display screens
-    if (targetValue === "C") {
-        equationDisplay.value = ""
-        partialResult.value = ""
-        return
+        console.log(db)// displayData()
     }
-    // Computes the operation
-    if (targetValue === "=") {
-        if (isNaN(compute(equationDisplay.value))) return equationDisplay.value // Prevents erroneous results
-        equationDisplay.value = compute(equationDisplay.value) // Shows the result on equationDisplay.value
-        partialResult.value = ''
-        return
-    }
-    // Open and Close Brackets Keys
-    if (targetValue === "(" || targetValue === ")") {
-        // Prevents erroneous brackets
-        equationDisplay.value = bracketManager(equationDisplay.value, targetValue)
-        partialUpdater()
-        return
-    }
-    // Inverts the sign of the last number or closed bracket
-    if (targetValue === "*-1") {
-        equationDisplay.value = signInverter(equationDisplay.value)
-        partialUpdater()
-        return
-    }
-    // If the last is '%' and its followed by a number, decimal point, or a opening bracket => Implied multiplication
-    if (lastChar === '%' && (/[\d.]|\(/.test(targetValue))) equationDisplay.value += '*'
-
-    // Decimal point Key managment
-    if (targetValue === '.') {
-        if (lastChar === ')') equationDisplay.value += '*' // Implied multiplication after brackets
-        if (lastChar === '' || /[+\-*/().%]/.test(lastChar)) equationDisplay.value += '0' // Add 0 when pressing "." without integers
-        if (decimalPointVerifier(equationDisplay.value)) return // Prevents multiple decimal points
-        equationDisplay.value += targetValue
-        partialUpdater()
-        return
+    // Set up the database tables
+    request.onupgradeneeded = function (event) {
+        let db = event.target.result
+        // Create an objectStore to store the operations
+        let objectStore = db.createObjectStore('history', {
+            keyPath: 'id',
+            autoIncrement: true
+        })
+        objectStore.createIndex('operation', 'operation', { unique: false })
+        objectStore.createIndex('result', 'result', { unique: false })
     }
 
-    // Numbers Keys
-    if (/\d/.test(targetValue)) {
-        if (lastChar === ')') equationDisplay.value += '*' // Implied multiplication
-        equationDisplay.value += targetValue
-        partialUpdater()
-        return
+    function recordOperation(equation, result) {
+        let newOperation = { operation: equation, result: result }
+        let transaction = db.transaction(['history'], 'readwrite')
+        let objectStore = transaction.objectStore('history')
+        
+        objectStore.add(newOperation)
+
+        transaction.oncomplete = function () {
+            console.log('Operation added to History')
+        }
+
+        console.log(db)// displayData()
+
+        transaction.onerror = function () {
+            console.log('It was not possible to register the transaction')
+        }
     }
 
-    // Operators Keys
-    const operators = /[+\-*/%]/
-    if (operators.test(targetValue)) {
-        // Prevents printing an operator at the begining of the operation or bracket, excepting unary minus
-        if ((!equationDisplay.value || lastChar === '(') && targetValue !== '-') return
-        // Prevents replacing a unary minus in a bracket with another operator
-        if (equationDisplay.value.slice(-2, -1) === '(' && !/[\d(]/.test(lastChar)) return
-        // Prevents replacing an initial unary minus with another operator
-        if (equationDisplay.value === '-' && operators.test(targetValue)) return
-        // If the last character is a decimal point or an operator, it's replaced with the new one, excepting unary minus
-        if (operators.test(lastChar) || lastChar === '.') equationDisplay.value = equationDisplay.value.slice(0, -1) + targetValue
-        else equationDisplay.value += targetValue
-        partialUpdater()
-        return
-    }
-})
-// Defines keyboard input
-document.addEventListener('keydown', function (event) {
-    const key = event.key
-    // Prevents capturing wrong keys
-    if (!['Delete', 'c', 'C', 'Enter', 'Backspace', '(', ')', '<', '>', '%', '+', '-', '*', '/', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(key)) return
-    const lastChar = equationDisplay.value.slice(-1)
+    function displayData() {
+        while (historyList.firstChild) historyList.removeChild(historyList.firstChild)
 
-    // Clears both display screens
-    if (key === 'Delete' || key === "c" || key === "C") {
-        equationDisplay.value = ""
-        partialResult.value = ""
-        return
+        let objectStore = db.transaction('history').objectStore('history')
+        objectStore.openCursor().onsuccess = function (event) {
+            let cursor = event.target.result
+            if (cursor) {
+                const operation = document.createElement('li')
+                const operationValue = document.createElement('p')
+                const operationResult = document.createElement('p')
+
+                operation.appendChild(operationValue)
+                operation.appendChild(operationResult)
+                history.appendChild(operation)
+
+                operationValue.textContent = cursor.value.operation
+                operationResult.textContent = cursor.value.result
+
+                operation.setAttribute('operation-id', cursor.value.id)
+
+                const deleteOperationBtn = document.createElement('button')
+                operation.appendChild(deleteOperationBtn)
+                deleteOperationBtn.textContent = 'X'
+
+                deleteOperationBtn.onclick = deleteOperation()
+
+                cursor.continue()
+            } else {
+                if (!history.firstChild) {
+                    const operation = document.createElement('li')
+                    operation.textContent = 'There are no registered operations yet'
+                    history.appendChild(operation)
+                }
+                console.log('The entire history is displayed on screen')
+            }
+        }
     }
-    // Computes operation with 'Enter' Key
-    if (key === "Enter") {
-        if (isNaN(compute(equationDisplay.value))) return equationDisplay.value // Prevents erroneous results
-        equationDisplay.value = compute(equationDisplay.value) // Shows the result on equationDisplay.value
-        partialResult.value = ''
-        return
+
+    function deleteOperation(event) {
+        let operationId = Number(event.target.parentNode.getAttribute('operation-id'))
+
+        let transaction = db.transaction(['history'], 'readwrite')
+        let objectStore = transaction.objectStore('history')
+        let request = objectStore.delete(operationId)
+
+        transaction.oncomplete = function () {
+            event.target.parentNode.parentNode.removeChild(event.target.parentNode)
+            console.log(`Operation ${operationId} has been deleted`)
+
+            if (!history.firstChild) {
+                let operation = document.createElement('li')
+                operation.textContent = 'There are no registered operations yet'
+                history.appendChild(operation)
+            }
+        }
     }
-    // Removes the last character with Backspace Key and updates partialResult
-    if (key === "Backspace") {
+
+    // Removes the last character of the equation and updates partialResult
+    deleteBtn.addEventListener('click', () => {
         equationDisplay.value = equationDisplay.value.slice(0, -1)
-        partialUpdater()
-    }
-    // Captures the parentheses keys
-    if (key === "(" || key === ")") {
-        // Prevents erroneous brackets
-        equationDisplay.value = bracketManager(equationDisplay.value, key)
-        partialUpdater()
-        return
-    }
-    // Captures the angle brackets keys to inverts the sign of the last number or closed bracket
-    if (key === "<" || key === '>') {
-        equationDisplay.value = signInverter(equationDisplay.value)
-        partialUpdater()
-        return
-    }
+        updatePartialResult()
+    })
+    // Defines keys behaviour
+    calculatorKeys.addEventListener('click', function (event) {
+        const target = event.target
+        const targetValue = target.value
+        const lastChar = equationDisplay.value.slice(-1)
 
-    // If the last is '%' and its followed by a number, decimal point, or a opening bracket => Implied multiplication
-    if (lastChar === '%' && (/[\d.]|\(/.test(key))) equationDisplay.value += '*'
+        if (!target.classList.contains('key')) return // Prevents behaviour when clicking outside of keys area
 
-    // Dot key managment
-    if (key === '.') {
-        if (lastChar === ')') equationDisplay.value += '*' // Implied multiplication after brackets
-        if (lastChar === '' || /[+\-*/().%]/.test(lastChar)) equationDisplay.value += '0' // Add 0 when pressing "." without integers
-        if (decimalPointVerifier(equationDisplay.value)) return // Prevents multiple decimal points
-        equationDisplay.value += key
-        partialUpdater()
-        return
-    }
+        // Clears both display screens
+        if (targetValue === "C") {
+            equationDisplay.value = ""
+            partialResult.value = ""
+            return
+        }
+        // Computes the operation
+        if (targetValue === "=") {
+            if (isNaN(compute(equationDisplay.value))) return equationDisplay.value // Prevents erroneous results
+            recordOperation(equationDisplay.value, compute(equationDisplay.value))
+            equationDisplay.value = compute(equationDisplay.value) // Shows the result on equationDisplay.value
+            partialResult.value = ''
+            return
+        }
+        // Open and Close Brackets Keys
+        if (targetValue === "(" || targetValue === ")") {
+            // Prevents erroneous brackets
+            equationDisplay.value = manageBrackets(equationDisplay.value, targetValue)
+            updatePartialResult()
+            return
+        }
+        // Inverts the sign of the last number or closed bracket
+        if (targetValue === "*-1") {
+            equationDisplay.value = invertSign(equationDisplay.value)
+            updatePartialResult()
+            return
+        }
+        // If the last is '%' and its followed by a number, decimal point, or a opening bracket => Implied multiplication
+        if (lastChar === '%' && (/[\d.]|\(/.test(targetValue))) equationDisplay.value += '*'
 
-    // Numbers Keys
-    if (/\d/.test(key)) {
-        if (lastChar === ')') equationDisplay.value += '*' // Implied multiplication
-        equationDisplay.value += key
-        partialUpdater()
-        return
-    }
+        // Decimal point Key managment
+        if (targetValue === '.') {
+            if (lastChar === ')') equationDisplay.value += '*' // Implied multiplication after brackets
+            if (lastChar === '' || /[+\-*/().%]/.test(lastChar)) equationDisplay.value += '0' // Add 0 when pressing "." without integers
+            if (verifyDecimalPoints(equationDisplay.value)) return // Prevents multiple decimal points
+            equationDisplay.value += targetValue
+            updatePartialResult()
+            return
+        }
 
-    // Operatos Keys
-    const operators = /[+\-*/%]/
-    if (operators.test(key)) {
-        // Prevents printing an operator at the start of the operation or bracket, excepting unary minus
-        if ((!equationDisplay.value || lastChar === '(') && key !== '-') return
-        // Prevents replacing an unary minus in a bracket with another operator
-        if (equationDisplay.value.slice(-2, -1) === '(' && !/[\d(]/.test(lastChar)) return
-        // Prevents replacing an initial unary minus with another operator
-        if (equationDisplay.value === '-' && operators.test(key)) return
-        // If the last character is a decimal point or an operator, it replaces it with the new one, excepting unary minus
-        if (operators.test(lastChar) || lastChar === '.') equationDisplay.value = equationDisplay.value.slice(0, -1) + key
-        else equationDisplay.value += key
-        partialUpdater()
-        return
-    }
-})
+        // Numbers Keys
+        if (/\d/.test(targetValue)) {
+            if (lastChar === ')') equationDisplay.value += '*' // Implied multiplication
+            equationDisplay.value += targetValue
+            updatePartialResult()
+            return
+        }
+
+        // Operators Keys
+        const operators = /[+\-*/%]/
+        if (operators.test(targetValue)) {
+            // Prevents printing an operator at the begining of the operation or bracket, excepting unary minus
+            if ((!equationDisplay.value || lastChar === '(') && targetValue !== '-') return
+            // Prevents replacing a unary minus in a bracket with another operator
+            if (equationDisplay.value.slice(-2, -1) === '(' && !/[\d(]/.test(lastChar)) return
+            // Prevents replacing an initial unary minus with another operator
+            if (equationDisplay.value === '-' && operators.test(targetValue)) return
+            // If the last character is a decimal point or an operator, it's replaced with the new one, excepting unary minus
+            if (operators.test(lastChar) || lastChar === '.') equationDisplay.value = equationDisplay.value.slice(0, -1) + targetValue
+            else equationDisplay.value += targetValue
+            updatePartialResult()
+            return
+        }
+    })
+    // Defines keyboard input
+    document.addEventListener('keydown', function (event) {
+        const key = event.key
+        // Prevents capturing wrong keys
+        if (!['Delete', 'c', 'C', 'Enter', 'Backspace', '(', ')', '<', '>', '%', '+', '-', '*', '/', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(key)) return
+        const lastChar = equationDisplay.value.slice(-1)
+
+        // Clears both display screens
+        if (key === 'Delete' || key === "c" || key === "C") {
+            equationDisplay.value = ""
+            partialResult.value = ""
+            return
+        }
+        // Computes operation with 'Enter' Key
+        if (key === "Enter") {
+            if (isNaN(compute(equationDisplay.value))) return equationDisplay.value // Prevents erroneous results
+            recordOperation(equationDisplay.value, compute(equationDisplay.value))
+            equationDisplay.value = compute(equationDisplay.value) // Shows the result on equationDisplay.value
+            partialResult.value = ''
+            return
+        }
+        // Removes the last character with Backspace Key and updates partialResult
+        if (key === "Backspace") {
+            equationDisplay.value = equationDisplay.value.slice(0, -1)
+            updatePartialResult()
+        }
+        // Captures the parentheses keys
+        if (key === "(" || key === ")") {
+            // Prevents erroneous brackets
+            equationDisplay.value = manageBrackets(equationDisplay.value, key)
+            updatePartialResult()
+            return
+        }
+        // Captures the angle brackets keys to inverts the sign of the last number or closed bracket
+        if (key === "<" || key === '>') {
+            equationDisplay.value = invertSign(equationDisplay.value)
+            updatePartialResult()
+            return
+        }
+
+        // If the last is '%' and its followed by a number, decimal point, or a opening bracket => Implied multiplication
+        if (lastChar === '%' && (/[\d.]|\(/.test(key))) equationDisplay.value += '*'
+
+        // Dot key managment
+        if (key === '.') {
+            if (lastChar === ')') equationDisplay.value += '*' // Implied multiplication after brackets
+            if (lastChar === '' || /[+\-*/().%]/.test(lastChar)) equationDisplay.value += '0' // Add 0 when pressing "." without integers
+            if (verifyDecimalPoints(equationDisplay.value)) return // Prevents multiple decimal points
+            equationDisplay.value += key
+            updatePartialResult()
+            return
+        }
+
+        // Numbers Keys
+        if (/\d/.test(key)) {
+            if (lastChar === ')') equationDisplay.value += '*' // Implied multiplication
+            equationDisplay.value += key
+            updatePartialResult()
+            return
+        }
+
+        // Operatos Keys
+        const operators = /[+\-*/%]/
+        if (operators.test(key)) {
+            // Prevents printing an operator at the start of the operation or bracket, excepting unary minus
+            if ((!equationDisplay.value || lastChar === '(') && key !== '-') return
+            // Prevents replacing an unary minus in a bracket with another operator
+            if (equationDisplay.value.slice(-2, -1) === '(' && !/[\d(]/.test(lastChar)) return
+            // Prevents replacing an initial unary minus with another operator
+            if (equationDisplay.value === '-' && operators.test(key)) return
+            // If the last character is a decimal point or an operator, it replaces it with the new one, excepting unary minus
+            if (operators.test(lastChar) || lastChar === '.') equationDisplay.value = equationDisplay.value.slice(0, -1) + key
+            else equationDisplay.value += key
+            updatePartialResult()
+            return
+        }
+    })
+}
 
 // Returns a valid partial result or '' if invalid
-function partialVerifier(equation) {
+function verifyPartialResult(equation) {
     let result = compute(equation)
     if (isNaN(result)) {
         result = ''
@@ -200,12 +306,12 @@ function partialVerifier(equation) {
     return result
 }
 // Updates the partial result on partialResult
-const partialUpdater = () => {
-    partialResult.value = partialVerifier(equationDisplay.value)
+const updatePartialResult = () => {
+    partialResult.value = verifyPartialResult(equationDisplay.value)
 }
 
 // Validations to prevent erroneous brackets
-function bracketManager(equation, key) {
+function manageBrackets(equation, key) {
     const lastChar = equation.slice(-1)
 
     if (equation === '-') return '(-' // If the operation starts with an unary minus sign, it's moved inside a new bracket 
@@ -224,17 +330,17 @@ function bracketManager(equation, key) {
     // If the last character is a decimal point, it is deleted and prints a '(' with implied multiplication
     if (key === '(' && /\./.test(lastChar)) return equation.slice(0, -1) + '*' + '('
     // Deletes unary minus when opening a new bracket
-    if (key === '(' && /-/.test(lastChar)) equation = bracketCleaner(equation)
+    if (key === '(' && /-/.test(lastChar)) equation = cleanBrackets(equation)
 
     equation = equation + key
 
     // Deletes brackets without numbers
-    if (key === ')') return bracketCleaner(equation)
+    if (key === ')') return cleanBrackets(equation)
 
     return equation
 }
 // Checks brackets without numbers and removes them
-function bracketCleaner(equation) {
+function cleanBrackets(equation) {
     for (let i = equation.length - 1; i >= 0; i--) {
         if (/\d/.test(equation[i])) return equation
         if (equation[i] === '(') return equation.slice(0, i)
@@ -242,7 +348,7 @@ function bracketCleaner(equation) {
 }
 
 // Inverts the sign of the last number or closed bracket
-function signInverter(equation) {
+function invertSign(equation) {
     if (!equation) return equation // Prevents errors with wrong or empty operations
     let lastChar = equation.slice(-1)
 
@@ -308,7 +414,7 @@ function compute(equation) {
     // Computes all brackets (even the nested ones) until it obtains an operation without them
     while (equationSplitted.includes('(') && equationSplitted.includes(')')) {
         const prev = equationSplitted.join(',')
-        equationSplitted = bracketSolver(equationSplitted)
+        equationSplitted = resolveBrackets(equationSplitted)
         // Progress condition to prevent an infinite loop - If there is no progress in iteration, a warning is displayed in console
         if (equationSplitted.join(',') === prev) {
             console.warn('No more brackets could be computed - Preventing an infinite loop')
@@ -316,7 +422,7 @@ function compute(equation) {
         }
     }
     // Computes the whole operation, by dividing it into terms and solving them
-    equationSplitted = calculator(equationSplitted)
+    equationSplitted = calculate(equationSplitted)
 
     // Parses the result and formats it using fixed-point notation
     equationSplitted = parseFloat(equationSplitted).toPrecision(10)
@@ -366,7 +472,7 @@ function tokenize(equation) {
     return tokensArray
 }
 // Returns true if the last number has a decimal point
-function decimalPointVerifier(equation) {
+function verifyDecimalPoints(equation) {
     const tokensArray = tokenize(equation) // Splits the operation into tokens
     for (let i = tokensArray.length - 1; i >= 0; i--) {
         const token = tokensArray[i]
@@ -377,7 +483,7 @@ function decimalPointVerifier(equation) {
     return false
 }
 // Computes an operation without brackets, starting by percentages, multiplications and divisions to additions and subtractions
-function calculator(equation) {
+function calculate(equation) {
     let result = equation // Receives an operation without brackets
     // Computes all percentages of the operation
     while (result.includes('%')) {
@@ -393,7 +499,7 @@ function calculator(equation) {
         // Stores the first operator's index
         let operatorIndex = result.indexOf(operator)
         // Sends operator and its operandums to operationSelector
-        let solved = operationSelector(result.slice(operatorIndex - 1, operatorIndex + 2))
+        let solved = selectOperation(result.slice(operatorIndex - 1, operatorIndex + 2))
         // Replaces each operation with their results
         result.splice(operatorIndex - 1, 3, solved)
     }
@@ -404,14 +510,14 @@ function calculator(equation) {
         // Stores the first operator's index
         let operatorIndex = result.indexOf(operator)
         // Sends operator and its operandums to operationSelector
-        let solved = operationSelector(result.slice(operatorIndex - 1, operatorIndex + 2))
+        let solved = selectOperation(result.slice(operatorIndex - 1, operatorIndex + 2))
         // Replaces each operation with their results
         result.splice(operatorIndex - 1, 3, solved)
     }
     return result
 }
 // Manages brackets, even nested ones, to obtain only the final result of the first bracket
-function bracketSolver(equation) {
+function resolveBrackets(equation) {
     let bracketArray = []
     let openIndex = 0
     let closeIndex = 0
@@ -445,18 +551,18 @@ function bracketSolver(equation) {
     // If there are nested brackets, repeats the function with only the nested bracket content, until getting the final result
     while (bracketArray.includes('(') && bracketArray.includes(')') && bracketArray.length > 1) {
         const prev = bracketArray.join(',')
-        bracketArray = bracketSolver(bracketArray) // Stores the nested bracket result
+        bracketArray = resolveBrackets(bracketArray) // Stores the nested bracket result
         // Progress condition to prevent an infinite loop
         if (bracketArray.join(',') === prev) break
     }
     // Computes the content of the deepest bracket
-    bracketArray = calculator(bracketArray)
+    bracketArray = calculate(bracketArray)
 
     // Returns the operation updated with bracket result
     return equation.slice(0, openIndex).concat(bracketArray).concat(equation.slice(closeIndex + 1))
 }
 // Selects the correct operation and solves it depending on the incoming operator
-function operationSelector(equation) {
+function selectOperation(equation) {
     if (equation[0] === '-') return // Prevents an error when there is only a unary minus
     let operator = equation[1]
 
