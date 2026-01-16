@@ -21,11 +21,16 @@ body {
 
 }
 
-nav {
+nav{
+    width: 100vw;
+}
+
+nav ul{
     display: flex;
-    justify-content: start;
+    flex-direction: row;
+    justify-content: space-around;
     margin: 5% 2%;
-    width: 100%;
+    list-style: none;
 }
 
 nav a {
