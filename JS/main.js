@@ -14,10 +14,10 @@ class Router {
 
     navigate(path) {
         // HISTORY API - Para deploy con URLs limpias (descomenta en prod)
-        // history.pushState(null, null, path)
+        history.pushState(null, null, path)
 
         // HASH URLs - Para desarrollo local con Live Server
-        window.location.hash = path
+        // window.location.hash = path
 
         this.render(path)
     }
@@ -48,16 +48,16 @@ class Router {
         })
 
         // HISTORY API - Para deploy con URLs limpias (descomenta en prod)
-        // window.addEventListener('popstate', () => {
-        //     this.render(window.location.pathname)
-        // })
-        // this.render(window.location.pathname)
+        window.addEventListener('popstate', () => {
+            this.render(window.location.pathname)
+        })
+        this.render(window.location.pathname)
 
         // HASH URLs - Para desarrollo local con Live Server
-        window.addEventListener('hashchange', () => {
-            this.render(window.location.hash.slice(1) || '/')
-        })
-        this.render(window.location.hash.slice(1) || '/')
+        // window.addEventListener('hashchange', () => {
+        //     this.render(window.location.hash.slice(1) || '/')
+        // })
+        // this.render(window.location.hash.slice(1) || '/')
     }
 }
 
@@ -78,12 +78,12 @@ const pages = {
             <!-- Calculator Utilities -->
             <nav>
                 <ul>
-                    <li><a href="history" class="link"><img src="./assets/img/history icon.png" width="50%"></a></li>
-                    <li><a href="unitsConverter" class="link"><img src="./assets/img/units icon.png" width="50%"></a>
+                    <li><a href="#history" class="link"><img src="./assets/img/history icon.png" alt='history' width="50%"></a></li>
+                    <li><a href="#unitsConverter" class="link"><img src="./assets/img/units icon.png" alt='units converter' width="50%"></a>
                     </li>
-                    <li><a href="cientist" class="link"><img src="./assets/img/scientist icon.png" width="50%"></a></li>
-                    <li><button type="button" class="link" id="delete-btn" value=""><img
-                                src="./assets/img/delete icon.png" width="35%"></button></li>
+                    <li><a href="#cientist" class="link"><img src="./assets/img/scientist icon.png" alt='cientist' width="50%"></a></li>
+                    <li><button type="button" class="link" id="delete-btn" data-page="#delete" value=""><img
+                                src="./assets/img/delete icon.png" alt='delete' width="35%"></button></li>
                 </ul>
             </nav>
 
@@ -102,7 +102,7 @@ const pages = {
                 <button type="button" class="key operator" id="equal-btn" value="=">=</button>
 
                 <!-- Number Keys -->
-                <div class="numpad">
+                <div id="numpad">
                     <button type="button" class="key" value="8">8</button>
                     <button type="button" class="key" value="9">9</button>
                     <button type="button" class="key" value="7">7</button>

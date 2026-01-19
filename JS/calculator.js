@@ -37,6 +37,8 @@ let equationDisplay
 let partialResult
 let deleteBtn
 let calculatorKeys
+let numpad
+let calculatorNav
 let db
 
 export function initCalculator() {
@@ -45,13 +47,31 @@ export function initCalculator() {
     partialResult = document.getElementById('partial-result')
     deleteBtn = document.getElementById('delete-btn')
     calculatorKeys = document.querySelector('.calculator-keys')
-    
+    numpad = document.getElementById('numpad')
+    calculatorNav = document.querySelectorAll('.link')
+
     setupDatabase()
 
-    // Removes the last character of the equation and updates partialResult
-    deleteBtn.addEventListener('click', () => {
-        equationDisplay.value = equationDisplay.value.slice(0, -1)
-        updatePartialResult()
+    calculatorNav.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault()
+            // Get the href from <a> or handle <button> data attribute
+            let targetPage = link.getAttribute('href') || link.getAttribute('data-page')
+            console.log(targetPage)
+            console.log(link)
+
+            if (targetPage === '#history') {
+                displayHistory()
+                // toDo Toggle Button Icon
+                // toDo Toggle Anchor href
+                // toDo Reverts to Numpad when click on same button
+            }
+            // Removes the last character of the equation and updates partialResult
+            if (targetPage === '#delete') {
+                equationDisplay.value = equationDisplay.value.slice(0, -1)
+                updatePartialResult()
+            }
+        })
     })
     // Defines keys behaviour
     calculatorKeys.addEventListener('click', function (event) {
@@ -214,8 +234,6 @@ function setupDatabase() {
     request.onsuccess = function () {
         console.log('Database opened successfully')
         db = request.result
-
-        console.log(db)// displayData()
     }
     // Set up the database tables
     request.onupgradeneeded = function (event) {
@@ -241,14 +259,18 @@ function recordOperation(equation, result) {
         console.log('Operation added to History')
     }
 
-    console.log(db)// displayData()
-
     transaction.onerror = function () {
         console.log('It was not possible to register the transaction')
     }
 }
-function displayData() {
-    while (historyList.firstChild) historyList.removeChild(historyList.firstChild)
+// Display history in the numpad area
+function displayHistory() {
+    // Clear and rebuild the numpad with history
+    numpad.innerHTML = ''
+
+    const historyList = document.createElement('ul')
+    historyList.style.listStyle = 'none'
+    historyList.style.padding = '10px'
 
     let objectStore = db.transaction('history').objectStore('history')
     objectStore.openCursor().onsuccess = function (event) {
@@ -257,32 +279,31 @@ function displayData() {
             const operation = document.createElement('li')
             const operationValue = document.createElement('p')
             const operationResult = document.createElement('p')
+            const deleteOperationBtn = document.createElement('button')
 
             operation.appendChild(operationValue)
             operation.appendChild(operationResult)
-            history.appendChild(operation)
+            operation.appendChild(deleteOperationBtn)
+            historyList.appendChild(operation)
 
             operationValue.textContent = cursor.value.operation
             operationResult.textContent = cursor.value.result
-
-            operation.setAttribute('operation-id', cursor.value.id)
-
-            const deleteOperationBtn = document.createElement('button')
-            operation.appendChild(deleteOperationBtn)
             deleteOperationBtn.textContent = 'X'
 
-            deleteOperationBtn.onclick = deleteOperation()
+            operation.setAttribute('operation-id', cursor.value.id)
+            deleteOperationBtn.addEventListener('click', deleteOperation)
 
             cursor.continue()
         } else {
-            if (!history.firstChild) {
+            if (!historyList.firstChild) {
                 const operation = document.createElement('li')
                 operation.textContent = 'There are no registered operations yet'
-                history.appendChild(operation)
+                historyList.appendChild(operation)
             }
             console.log('The entire history is displayed on screen')
         }
     }
+    numpad.appendChild(historyList)
 }
 function deleteOperation(event) {
     let operationId = Number(event.target.parentNode.getAttribute('operation-id'))

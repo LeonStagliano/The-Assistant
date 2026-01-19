@@ -39,7 +39,7 @@ nav a {
 
 .link {
     font-size: 1.1rem;
-    margin: 4% 2%;
+    display: block;
     text-decoration: none;
 }
 
@@ -68,7 +68,7 @@ nav a {
     padding: 18%
 }
 
-.numpad {
+#numpad {
     grid-area: 2 / 1 / span 4 / span 3;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -86,4 +86,8 @@ nav a {
 footer {
     position: absolute;
     bottom: 0;
+}
+
+.hiddenElement {
+    visibility: hidden;
 }
