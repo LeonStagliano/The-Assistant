@@ -35,9 +35,9 @@ It stores a history of operations and results, and also includes a units convert
 
 let equationDisplay
 let partialResult
-let deleteBtn
 let calculatorKeys
 let numpad
+let historyList
 let calculatorNav
 let db
 
@@ -45,34 +45,13 @@ export function initCalculator() {
     // Get DOM elements when the function is called
     equationDisplay = document.getElementById('equation-display')
     partialResult = document.getElementById('partial-result')
-    deleteBtn = document.getElementById('delete-btn')
     calculatorKeys = document.querySelector('.calculator-keys')
     numpad = document.getElementById('numpad')
+    historyList = document.getElementById('history-list')
     calculatorNav = document.querySelectorAll('.link')
 
     setupDatabase()
-
-    calculatorNav.forEach(function (link) {
-        link.addEventListener('click', function (event) {
-            event.preventDefault()
-            // Get the href from <a> or handle <button> data attribute
-            let targetPage = link.getAttribute('href') || link.getAttribute('data-page')
-            console.log(targetPage)
-            console.log(link)
-
-            if (targetPage === '#history') {
-                displayHistory()
-                // toDo Toggle Button Icon
-                // toDo Toggle Anchor href
-                // toDo Reverts to Numpad when click on same button
-            }
-            // Removes the last character of the equation and updates partialResult
-            if (targetPage === '#delete') {
-                equationDisplay.value = equationDisplay.value.slice(0, -1)
-                updatePartialResult()
-            }
-        })
-    })
+    
     // Defines keys behaviour
     calculatorKeys.addEventListener('click', function (event) {
         const target = event.target
@@ -222,6 +201,28 @@ export function initCalculator() {
             return
         }
     })
+
+    calculatorNav.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault()
+
+            let targetPage = link.getAttribute('href') || link.getAttribute('data-page')
+            console.log(targetPage)
+            console.log(link)
+
+            if (targetPage === '#history') {
+                displayHistory()
+                // toDo Toggle History/Numpad Button Icon
+                // toDo Toggle Anchor href
+                // toDo Reverts to Numpad when click on same button
+            }
+            // Removes the last character of the equation and updates partialResult
+            if (targetPage === '#delete') {
+                equationDisplay.value = equationDisplay.value.slice(0, -1)
+                updatePartialResult()
+            }
+        })
+    })
 }
 // Operation History with IndexedDB
 function setupDatabase() {
@@ -265,24 +266,29 @@ function recordOperation(equation, result) {
 }
 // Display history in the numpad area
 function displayHistory() {
-    // Clear and rebuild the numpad with history
-    numpad.innerHTML = ''
+    numpad.style.display = 'none'
+    historyList.style.display = 'grid'
 
-    const historyList = document.createElement('ul')
-    historyList.style.listStyle = 'none'
-    historyList.style.padding = '10px'
+    while(historyList.firstChild) historyList.removeChild(historyList.firstChild)
+    // const historyList = document.createElement('ul')
+    // historyList.setAttribute('id', 'history-list')
 
     let objectStore = db.transaction('history').objectStore('history')
     objectStore.openCursor().onsuccess = function (event) {
         let cursor = event.target.result
         if (cursor) {
             const operation = document.createElement('li')
+            const operationContainer = document.createElement('div')
             const operationValue = document.createElement('p')
             const operationResult = document.createElement('p')
             const deleteOperationBtn = document.createElement('button')
 
-            operation.appendChild(operationValue)
-            operation.appendChild(operationResult)
+            operation.classList.add('history-operation')
+            operationContainer.classList.add('operation-container')
+
+            operationContainer.appendChild(operationValue)
+            operationContainer.appendChild(operationResult)
+            operation.appendChild(operationContainer)
             operation.appendChild(deleteOperationBtn)
             historyList.appendChild(operation)
 
@@ -291,19 +297,23 @@ function displayHistory() {
             deleteOperationBtn.textContent = 'X'
 
             operation.setAttribute('operation-id', cursor.value.id)
+            operationValue.addEventListener('click', recoverHistory)
+            operationResult.addEventListener('click', recoverHistory)
             deleteOperationBtn.addEventListener('click', deleteOperation)
 
             cursor.continue()
         } else {
             if (!historyList.firstChild) {
                 const operation = document.createElement('li')
+                operation.classList.add('history-operation')
                 operation.textContent = 'There are no registered operations yet'
                 historyList.appendChild(operation)
             }
             console.log('The entire history is displayed on screen')
+
+            // calculatorKeys.appendChild(historyList)
         }
     }
-    numpad.appendChild(historyList)
 }
 function deleteOperation(event) {
     let operationId = Number(event.target.parentNode.getAttribute('operation-id'))
@@ -322,6 +332,14 @@ function deleteOperation(event) {
             history.appendChild(operation)
         }
     }
+}
+function recoverHistory(event) {
+    let historicValue = event.target.textContent
+    equationDisplay.value = historicValue
+}
+// toDo displayNumpad function
+function displayNumpad() {
+    
 }
 
 // Returns a valid partial result or '' if invalid
