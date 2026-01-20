@@ -88,6 +88,32 @@ footer {
     bottom: 0;
 }
 
-.hiddenElement {
-    visibility: hidden;
+.display-none{
+    display: none !important;
+}
+
+#history-list {
+    list-style: none;
+    grid-area: 2 / 1 / span 4 / span 3;
+    /* display: grid; */
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+    height: 100%;
+    overflow: scroll;
+}
+
+.operation-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 100%;
+    padding: 0 2%;
+}
+
+.history-operation {
+    grid-column: span 3;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid black;
 }
