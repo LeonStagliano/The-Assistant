@@ -288,19 +288,27 @@ function displayHistory() {
             const operationValue = document.createElement('p')
             const operationResult = document.createElement('p')
             const deleteOperationBtn = document.createElement('button')
+            const deleteOperationIcon = document.createElement('img')
 
             operation.classList.add('history-operation')
             operationContainer.classList.add('operation-container')
+            deleteOperationIcon.setAttribute('src', './assets/img/trash icon.png')
+            deleteOperationIcon.setAttribute('alt', 'Delete icon')
+            // toDo Move this style to CSS
+            deleteOperationBtn.style.width = '20%'
+            deleteOperationBtn.style.background = 'none'
+            deleteOperationBtn.style.border = 'none'
+            deleteOperationIcon.style.width = '70%'
 
             operationContainer.appendChild(operationValue)
             operationContainer.appendChild(operationResult)
+            deleteOperationBtn.appendChild(deleteOperationIcon)
             operation.appendChild(operationContainer)
             operation.appendChild(deleteOperationBtn)
             historyList.appendChild(operation)
 
             operationValue.textContent = cursor.value.operation
             operationResult.textContent = cursor.value.result
-            deleteOperationBtn.textContent = 'X'
 
             operation.setAttribute('operation-id', cursor.value.id)
             operationValue.addEventListener('click', recoverHistory)
