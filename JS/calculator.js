@@ -19,7 +19,10 @@ It stores a history of operations and results, and also includes a units convert
 // // Manage invalid outputs
 // // Prevent infinite Loops by unclosed brackets
 // // Sign Inverter key
-// History of operations and results
+// // History of operations and results
+// // Toggle History/Numpad Button Icon
+// // Toggle Anchor href
+// // Reverts to Numpad when click on same button
 // Units Converter
 // Equation cursor
 // Scientist calculator
@@ -39,6 +42,7 @@ let calculatorKeys
 let numpad
 let historyList
 let calculatorNav
+let historyIcon
 let db
 
 export function initCalculator() {
@@ -49,9 +53,10 @@ export function initCalculator() {
     numpad = document.getElementById('numpad')
     historyList = document.getElementById('history-list')
     calculatorNav = document.querySelectorAll('.link')
+    historyIcon = document.getElementById('history-icon')
 
     setupDatabase()
-    
+
     // Defines keys behaviour
     calculatorKeys.addEventListener('click', function (event) {
         const target = event.target
@@ -69,7 +74,8 @@ export function initCalculator() {
         // Computes the operation
         if (targetValue === "=") {
             if (isNaN(compute(equationDisplay.value))) return equationDisplay.value // Prevents erroneous results
-            recordOperation(equationDisplay.value, compute(equationDisplay.value))
+            recordOperation(equationDisplay.value, compute(equationDisplay.value)) // Stores the operation in the history
+            displayHistory()
             equationDisplay.value = compute(equationDisplay.value) // Shows the result on equationDisplay.value
             partialResult.value = ''
             return
@@ -140,7 +146,8 @@ export function initCalculator() {
         // Computes operation with 'Enter' Key
         if (key === "Enter") {
             if (isNaN(compute(equationDisplay.value))) return equationDisplay.value // Prevents erroneous results
-            recordOperation(equationDisplay.value, compute(equationDisplay.value))
+            recordOperation(equationDisplay.value, compute(equationDisplay.value)) // Stores the operation in the history
+            displayHistory()
             equationDisplay.value = compute(equationDisplay.value) // Shows the result on equationDisplay.value
             partialResult.value = ''
             return
@@ -201,25 +208,23 @@ export function initCalculator() {
             return
         }
     })
-
+    // Adds listeners to each calculator nav anchor
     calculatorNav.forEach(function (link) {
         link.addEventListener('click', function (event) {
             event.preventDefault()
 
             let targetPage = link.getAttribute('href') || link.getAttribute('data-page')
-            console.log(targetPage)
-            console.log(link)
 
             if (targetPage === '#history') {
                 displayHistory()
-                // toDo Toggle History/Numpad Button Icon
-                // toDo Toggle Anchor href
-                // toDo Reverts to Numpad when click on same button
             }
             // Removes the last character of the equation and updates partialResult
             if (targetPage === '#delete') {
                 equationDisplay.value = equationDisplay.value.slice(0, -1)
                 updatePartialResult()
+            }
+            if (targetPage === '#numpad') {
+                displayNumpad()
             }
         })
     })
@@ -268,15 +273,16 @@ function recordOperation(equation, result) {
 function displayHistory() {
     numpad.style.display = 'none'
     historyList.style.display = 'grid'
-
-    while(historyList.firstChild) historyList.removeChild(historyList.firstChild)
-    // const historyList = document.createElement('ul')
-    // historyList.setAttribute('id', 'history-list')
+    historyIcon.src = './assets/img/calculator icon.png'
+    calculatorNav[0].href = '#numpad'
+    // Cleans history list
+    while (historyList.firstChild) historyList.removeChild(historyList.firstChild)
 
     let objectStore = db.transaction('history').objectStore('history')
     objectStore.openCursor().onsuccess = function (event) {
         let cursor = event.target.result
         if (cursor) {
+            // Creates the new history-list content
             const operation = document.createElement('li')
             const operationContainer = document.createElement('div')
             const operationValue = document.createElement('p')
@@ -310,11 +316,10 @@ function displayHistory() {
                 historyList.appendChild(operation)
             }
             console.log('The entire history is displayed on screen')
-
-            // calculatorKeys.appendChild(historyList)
         }
     }
 }
+// Removes an operation from the history-list
 function deleteOperation(event) {
     let operationId = Number(event.target.parentNode.getAttribute('operation-id'))
 
@@ -326,20 +331,27 @@ function deleteOperation(event) {
         event.target.parentNode.parentNode.removeChild(event.target.parentNode)
         console.log(`Operation ${operationId} has been deleted`)
 
-        if (!history.firstChild) {
-            let operation = document.createElement('li')
+        if (!historyList.firstChild) {
+            const operation = document.createElement('li')
+            operation.classList.add('history-operation')
             operation.textContent = 'There are no registered operations yet'
-            history.appendChild(operation)
+            historyList.appendChild(operation)
         }
     }
 }
+// toDO cleanHistory function
+// Recovers an historic value to use it again
 function recoverHistory(event) {
     let historicValue = event.target.textContent
-    equationDisplay.value = historicValue
+    // toDO Considerar si hacer validaciones para evitar imprimir numero despues de numero
+    equationDisplay.value += historicValue
+    updatePartialResult()
 }
-// toDo displayNumpad function
 function displayNumpad() {
-    
+    numpad.style.display = 'grid'
+    historyList.style.display = 'none'
+    historyIcon.src = './assets/img/history icon.png'
+    calculatorNav[0].href = '#history'
 }
 
 // Returns a valid partial result or '' if invalid

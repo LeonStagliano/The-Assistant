@@ -78,7 +78,7 @@ const pages = {
             <!-- Calculator Utilities -->
             <nav>
                 <ul>
-                    <li><a href="#history" class="link"><img src="./assets/img/history icon.png" alt='history' width="50%"></a></li>
+                    <li><a href="#history" class="link"><img src="./assets/img/history icon.png" id="history-icon" alt='history' width="50%"></a></li>
                     <li><a href="#unitsConverter" class="link"><img src="./assets/img/units icon.png" alt='units converter' width="50%"></a>
                     </li>
                     <li><a href="#cientist" class="link"><img src="./assets/img/scientist icon.png" alt='cientist' width="50%"></a></li>
