@@ -44,6 +44,7 @@ let historyList
 let calculatorNav
 let historyIcon
 let db
+let isHistoryDisplayed = false
 
 export function initCalculator() {
     // Get DOM elements when the function is called
@@ -75,7 +76,7 @@ export function initCalculator() {
         if (targetValue === "=") {
             if (isNaN(compute(equationDisplay.value))) return equationDisplay.value // Prevents erroneous results
             recordOperation(equationDisplay.value, compute(equationDisplay.value)) // Stores the operation in the history
-            displayHistory()
+            if (isHistoryDisplayed) displayHistory()
             equationDisplay.value = compute(equationDisplay.value) // Shows the result on equationDisplay.value
             partialResult.value = ''
             return
@@ -147,7 +148,7 @@ export function initCalculator() {
         if (key === "Enter") {
             if (isNaN(compute(equationDisplay.value))) return equationDisplay.value // Prevents erroneous results
             recordOperation(equationDisplay.value, compute(equationDisplay.value)) // Stores the operation in the history
-            displayHistory()
+            if (isHistoryDisplayed) displayHistory()
             equationDisplay.value = compute(equationDisplay.value) // Shows the result on equationDisplay.value
             partialResult.value = ''
             return
@@ -275,8 +276,16 @@ function displayHistory() {
     historyList.style.display = 'grid'
     historyIcon.src = './assets/img/calculator icon.png'
     calculatorNav[0].href = '#numpad'
-    // Cleans history list
+    isHistoryDisplayed = true
+    // Clears history list
     while (historyList.firstChild) historyList.removeChild(historyList.firstChild)
+
+    // Clears history database
+    const clearHistoryBtn = document.createElement('button')
+    clearHistoryBtn.setAttribute('id', 'clear-history-btn')
+    clearHistoryBtn.textContent = 'Clear history'
+    historyList.appendChild(clearHistoryBtn)
+    clearHistoryBtn.addEventListener('click', clearHistory)
 
     let objectStore = db.transaction('history').objectStore('history')
     objectStore.openCursor().onsuccess = function (event) {
@@ -308,7 +317,7 @@ function displayHistory() {
             historyList.appendChild(operation)
 
             operationValue.textContent = cursor.value.operation
-            operationResult.textContent = cursor.value.result
+            operationResult.textContent = `= ${cursor.value.result}`
 
             operation.setAttribute('operation-id', cursor.value.id)
             operationValue.addEventListener('click', recoverHistory)
@@ -317,7 +326,8 @@ function displayHistory() {
 
             cursor.continue()
         } else {
-            if (!historyList.firstChild) {
+            if (!historyList.querySelector('.history-operation')) {
+                document.getElementById('clear-history-btn').remove()
                 const operation = document.createElement('li')
                 operation.classList.add('history-operation')
                 operation.textContent = 'There are no registered operations yet'
@@ -329,17 +339,20 @@ function displayHistory() {
 }
 // Removes an operation from the history-list
 function deleteOperation(event) {
-    let operationId = Number(event.target.parentNode.getAttribute('operation-id'))
+    const operationElement = event.target.closest('[operation-id]')
+    if (!operationElement) return
+
+    let operationId = Number(operationElement.getAttribute('operation-id'))
 
     let transaction = db.transaction(['history'], 'readwrite')
     let objectStore = transaction.objectStore('history')
     let request = objectStore.delete(operationId)
 
     transaction.oncomplete = function () {
-        event.target.parentNode.parentNode.removeChild(event.target.parentNode)
+        operationElement.remove()
         console.log(`Operation ${operationId} has been deleted`)
-
-        if (!historyList.firstChild) {
+        if (!historyList.querySelector('.history-operation')) {
+            document.getElementById('clear-history-btn').remove()
             const operation = document.createElement('li')
             operation.classList.add('history-operation')
             operation.textContent = 'There are no registered operations yet'
@@ -347,11 +360,23 @@ function deleteOperation(event) {
         }
     }
 }
-// toDO cleanHistory function
+// toDO clearHistory function
+function clearHistory() {
+    let transaction = db.transaction(['history'], 'readwrite')
+    let objectStore = transaction.objectStore('history')
+    objectStore.clear()
+    displayHistory()
+}
 // Recovers an historic value to use it again
 function recoverHistory(event) {
     let historicValue = event.target.textContent
     // toDO Considerar si hacer validaciones para evitar imprimir numero despues de numero
+    // toDO Eliminar el '=' si el historicValue es el 'operationResult'
+    // toDo Ver como concatenar o como proceder con multipels clicks
+    if (historicValue.slice(0, 1) === '=') {
+        equationDisplay.value += historicValue.slice(1)
+        return
+    }
     equationDisplay.value += historicValue
     updatePartialResult()
 }
@@ -360,6 +385,7 @@ function displayNumpad() {
     historyList.style.display = 'none'
     historyIcon.src = './assets/img/history icon.png'
     calculatorNav[0].href = '#history'
+    isHistoryDisplayed = false
 }
 
 // Returns a valid partial result or '' if invalid

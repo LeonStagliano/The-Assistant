@@ -113,3 +113,7 @@ footer {
     justify-content: space-between;
     border: 1px solid black;
 }
+
+#clear-history-btn {
+    grid-column: span 3;
+}
