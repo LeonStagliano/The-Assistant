@@ -41,8 +41,9 @@ let partialResult
 let calculatorKeys
 let numpad
 let calculatorNav
-let historyContainer
+let historyNavBtn
 let historyIcon
+let historyContainer
 let db
 let isHistoryDisplayed = false
 
@@ -53,8 +54,9 @@ export function initCalculator() {
     calculatorKeys = document.querySelector('.calculator-keys')
     numpad = document.getElementById('numpad')
     calculatorNav = document.querySelectorAll('.link')
-    historyContainer = document.getElementById('history-container')
+    historyNavBtn = document.getElementById('history-btn')
     historyIcon = document.getElementById('history-icon')
+    historyContainer = document.getElementById('history-container')
 
     setupDatabase()
 
@@ -274,8 +276,8 @@ function recordOperation(equation, result) {
 function displayHistory() {
     numpad.style.display = 'none'
     historyContainer.style.display = 'grid'
+    historyNavBtn.href = '#numpad'
     historyIcon.src = './assets/img/calculator icon.png'
-    calculatorNav[0].href = '#numpad'
     isHistoryDisplayed = true
     // Clears history list
     while (historyContainer.firstChild) historyContainer.removeChild(historyContainer.firstChild)
