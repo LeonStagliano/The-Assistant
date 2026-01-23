@@ -119,7 +119,7 @@ const pages = {
                     <button type="button" class="key" value="0">0</button>
                     <button type="button" class="key" class="decimal" value=".">.</button>
                 </div>
-                <ul id="history-list" style="display: none;"></ul>
+                <div id="history-container" style="display: none;"></div>
 
             </div>`
 

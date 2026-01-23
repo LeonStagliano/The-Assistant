@@ -89,14 +89,11 @@ footer {
     bottom: 0;
 }
 
-#history-list {
+#history-container {
     list-style: none;
     grid-area: 2 / 1 / span 4 / span 3;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-rows: 9fr 1fr;
     gap: 10px;
-    height: 100%;
-    overflow: scroll;
 }
 
 .operation-container {
@@ -112,8 +109,16 @@ footer {
     display: flex;
     justify-content: space-between;
     border: 1px solid black;
+    padding: 1%;
 }
 
 #clear-history-btn {
     grid-column: span 3;
+}
+
+.list-container{
+    grid-column: span 3;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
 }
