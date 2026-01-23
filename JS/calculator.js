@@ -317,7 +317,7 @@ function displayHistory() {
             historyList.appendChild(operation)
 
             operationValue.textContent = cursor.value.operation
-            operationResult.textContent = `= ${cursor.value.result}`
+            operationResult.textContent = `=${cursor.value.result}`
 
             operation.setAttribute('operation-id', cursor.value.id)
             operationValue.addEventListener('click', recoverHistory)
@@ -360,21 +360,20 @@ function deleteOperation(event) {
         }
     }
 }
-// toDO clearHistory function
 function clearHistory() {
     let transaction = db.transaction(['history'], 'readwrite')
     let objectStore = transaction.objectStore('history')
     objectStore.clear()
+    console.log('The history has been cleared')
     displayHistory()
 }
 // Recovers an historic value to use it again
 function recoverHistory(event) {
     let historicValue = event.target.textContent
-    // toDO Considerar si hacer validaciones para evitar imprimir numero despues de numero
-    // toDO Eliminar el '=' si el historicValue es el 'operationResult'
-    // toDo Ver como concatenar o como proceder con multipels clicks
+    if (verifyDecimalPoints(equationDisplay.value)) return  // Prevents multiple decimal points
     if (historicValue.slice(0, 1) === '=') {
         equationDisplay.value += historicValue.slice(1)
+        updatePartialResult()
         return
     }
     equationDisplay.value += historicValue
