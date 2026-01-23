@@ -39,13 +39,15 @@ nav a {
 }
 
 .link {
-    display: block;
     text-decoration: none;
+    display: flex;
+    align-items: center;
 }
 
 #delete-btn {
     border: none;
     background-color: white;
+    justify-content: end;
 }
 
 .calculator-keys {
@@ -92,7 +94,7 @@ footer {
     list-style: none;
     grid-area: 2 / 1 / span 4 / span 3;
     grid-template-rows: 9fr 1fr;
-    gap: 10px;
+    gap: 2%;
 }
 
 .operation-container {
@@ -124,5 +126,6 @@ footer {
 
 .nav-icon{
     width: 60%;
+    margin: 3%;
     padding: 10%;
 }
