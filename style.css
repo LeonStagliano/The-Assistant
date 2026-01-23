@@ -29,16 +29,16 @@ nav ul{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    margin: 5% 2%;
+    /* margin: 5% 2%; */
     list-style: none;
 }
 
 nav a {
     color: darkmagenta;
+    text-decoration: none;
 }
 
 .link {
-    font-size: 1.1rem;
     display: block;
     text-decoration: none;
 }
@@ -46,7 +46,6 @@ nav a {
 #delete-btn {
     border: none;
     background-color: white;
-    align-self: end;
 }
 
 .calculator-keys {
@@ -121,4 +120,9 @@ footer {
     display: flex;
     flex-direction: column;
     overflow: scroll;
+}
+
+.nav-icon{
+    width: 60%;
+    padding: 10%;
 }

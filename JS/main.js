@@ -78,12 +78,12 @@ const pages = {
             <!-- Calculator Utilities -->
             <nav>
                 <ul>
-                    <li><a href="#history" class="link"><img src="./assets/img/history icon.png" id="history-icon" alt='history' width="50%"></a></li>
-                    <li><a href="#unitsConverter" class="link"><img src="./assets/img/units icon.png" alt='units converter' width="50%"></a>
+                    <li><a href="#history" class="link"><img src="./assets/img/history icon.png" id="history-icon" class="nav-icon" alt='history'></a></li>
+                    <li><a href="#unitsConverter" class="link"><img src="./assets/img/units icon.png" class="nav-icon" alt='units converter'></a>
                     </li>
-                    <li><a href="#cientist" class="link"><img src="./assets/img/scientist icon.png" alt='cientist' width="50%"></a></li>
+                    <li><a href="#cientist" class="link"><img src="./assets/img/scientist icon.png" class="nav-icon" alt='cientist'></a></li>
                     <li><button type="button" class="link" id="delete-btn" data-page="#delete" value=""><img
-                                src="./assets/img/delete icon.png" alt='delete' width="50%"></button></li>
+                                src="./assets/img/delete icon.png" class="nav-icon" alt='delete'></button></li>
                 </ul>
             </nav>
 
