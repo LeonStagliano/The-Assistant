@@ -372,11 +372,11 @@ function clearHistory() {
     console.log('The history has been cleared')
     displayHistory()
 }
-// toDo Validar si los puntos decimales son en el primer o ultimo número, para no retornar cuando la operación podría seguir siendo válida
 // Recovers an historic value to use it again
 function recoverHistory(event) {
     let historicValue = event.target.textContent
-    if (verifyDecimalPoints(equationDisplay.value) && verifyDecimalPoints(historicValue)) return  // Prevents multiple decimal points
+    // Checks if the last number in the equation and the first number in the historical value have decimal points
+    if (verifyDecimalPoints(equationDisplay.value) && verifyDecimalPoints(historicValue, true)) return  // Prevents multiple decimal points
     if (historicValue.slice(0, 1) === '=') {
         equationDisplay.value += historicValue.slice(1)
         updatePartialResult()
@@ -565,12 +565,21 @@ function tokenize(equation) {
     return tokensArray
 }
 // Returns true if the last number has a decimal point
-function verifyDecimalPoints(equation) {
+function verifyDecimalPoints(equation, fromBegin) {
     const tokensArray = tokenize(equation) // Splits the operation into tokens
-    for (let i = tokensArray.length - 1; i >= 0; i--) {
+    // Checks from the begining of equation
+    if (fromBegin){
+        for (let i = 0; i < tokensArray.length; i++) {
         const token = tokensArray[i]
         if (/^-?(?:\d+(\.\d+)?|\.\d+)$/.test(token)) { // Checks if the token is a number with decimals (even negative ones)
             return token.includes('.')
+        }
+    }} else {
+        for (let i = tokensArray.length - 1; i >= 0; i--) {
+            const token = tokensArray[i]
+            if (/^-?(?:\d+(\.\d+)?|\.\d+)$/.test(token)) { // Checks if the token is a number with decimals (even negative ones)
+                return token.includes('.')
+            }
         }
     }
     return false
