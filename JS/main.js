@@ -1,4 +1,5 @@
 import { initCalculator } from "./calculator.js"
+import { initConverter } from "./conversions.js"
 
 class Router {
     constructor() {
@@ -13,6 +14,8 @@ class Router {
     }
 
     navigate(path) {
+        if (this.currentRoute === path) return // Prevents unnecesary renders
+
         // HISTORY API - Para deploy con URLs limpias (descomenta en prod)
         history.pushState(null, null, path)
 
@@ -35,16 +38,17 @@ class Router {
             this.currentRoute = path
 
             if (path === '/calculator') initCalculator()
+            if (path === '/units-converter') initConverter()
         }
     }
 
     init() {
         document.addEventListener('click', (event) => {
-            if (event.target.matches('[data-link]')) {
-                event.preventDefault()
-                let path = event.target.getAttribute('href')
-                this.navigate(path)
-            }
+            const link = event.target.closest('a[data-link]')
+            if (!link) return
+
+            event.preventDefault()
+            this.navigate(link.getAttribute('href'))
         })
 
         // HISTORY API - Para deploy con URLs limpias (descomenta en prod)
@@ -63,7 +67,11 @@ class Router {
 
 const pages = {
     home: () => {
-
+        const title = document.getElementById('main-title')
+        title.textContent = 'Home'
+        const section = document.createElement('section')
+        section.innerHTML = '<h2>Welcome to The Assistant</h2>'
+        return section
     },
 
     calculator: () => {
@@ -71,6 +79,7 @@ const pages = {
         title.textContent = 'Calculator'
         const section = document.createElement('section')
         section.classList.add('calculator')
+        section.id = 'section-container'
         section.innerHTML = `
             <!-- Calculator Displays -->
             <input type="text" class="display" id="equation-display" value="" readonly />
@@ -79,7 +88,7 @@ const pages = {
             <nav>
                 <ul>
                     <li><a href="#history" id="history-btn" class="link"><img src="./assets/img/history icon.png" id="history-icon" class="nav-icon" alt='history'></a></li>
-                    <li><a href="#unitsConverter" class="link"><img src="./assets/img/units icon.png" class="nav-icon" alt='units converter'></a>
+                    <li><a href="/units-converter" data-link><img src="./assets/img/units icon.png" class="nav-icon" alt='units converter'></a>
                     </li>
                     <li><a href="#cientist" class="link"><img src="./assets/img/scientist icon.png" class="nav-icon" alt='cientist'></a></li>
                     <li><button type="button" class="link" id="delete-btn" data-page="#delete" value=""><img
@@ -126,26 +135,71 @@ const pages = {
         return section
     },
 
-    notes: () => {
+    unitsConverter: () => {
+        const title = document.getElementById('main-title')
+        title.textContent = 'Units Converter'
+        const section = document.createElement('section')
+        section.classList.add('converter')
+        section.id = 'section-container'
+        section.innerHTML = `
+            <div class="converter-controls">
+                <label for="category-select">Select category:</label>
+                <select id="category-select">
+                    <option value="">-- Choose a category --</option>
+                    <option value="length">Length</option>
+                    <option value="mass">Mass</option>
+                    <option value="volume">Volume</option>
+                    <option value="area">Area</option>
+                    <option value="temperature">Temperature</option>
+                    <option value="nauticalUnits">Nautical units</option>
+                    <option value="astronomicUnits">Astronomic units</option>
+                </select>
+            </div>
+            <div class="converter-content" id="converter-content">
+                <!-- Converter fields will be generated here -->
+            </div>
+            <div class="back-button">
+                <a href="/calculator" data-link>Back to Calculator</a>
+            </div>
+        `
+        return section
+    },
 
+    notes: () => {
+        const title = document.getElementById('main-title')
+        title.textContent = 'Notes'
+        const section = document.createElement('section')
+        section.innerHTML = '<h2>Notes feature coming soon...</h2>'
+        return section
     },
 
     calendar: () => {
-
+        const title = document.getElementById('main-title')
+        title.textContent = 'Calendar'
+        const section = document.createElement('section')
+        section.innerHTML = '<h2>Calendar feature coming soon...</h2>'
+        return section
     },
 
     timer: () => {
-
+        const title = document.getElementById('main-title')
+        title.textContent = 'Timer'
+        const section = document.createElement('section')
+        section.innerHTML = '<h2>Timer feature coming soon...</h2>'
+        return section
     },
 
     notFound: () => {
-
+        const section = document.createElement('section')
+        section.innerHTML = '<h2>404 - Page not found</h2>'
+        return section
     }
 }
 
 const router = new Router()
     .register('/home', pages.home)
     .register('/calculator', pages.calculator)
+    .register('/units-converter', pages.unitsConverter)
     .register('/notes', pages.notes)
     .register('/calendar', pages.calendar)
     .register('/timer', pages.timer)
