@@ -1,3 +1,4 @@
+// Object with all unit conversion ratios
 export const conversions = {
     length: {
         base: 'meters',
@@ -95,8 +96,135 @@ export const conversions = {
         }
     },
     temperature: {
-        base: 'celsius',
-        
+        units: {
+            celsius: {
+                toCelsius: (c) => c,
+                toFahrenheit: (c) => (c * 9 / 5) + 32,
+                toKelvin: (c) => c + 273.15
+            },
+            fahrenheit: {
+                toFahrenheit: (f) => f,
+                toCelsius: (f) => (f - 32) * 5 / 9,
+                toKelvin: (f) => (f - 32) * 5 / 9 + 273.15
+            },
+            kelvin: {
+                toKelvin: (k) => k,
+                toCelsius: (k) => k - 273.15,
+                toFahrenheit: (k) => (k - 273.15) * 9 / 5 + 32
+            }
+        }
+    }
+}
+
+// Initialize the converter interface when the page loads
+export function initConverter() {
+    const categorySelect = document.getElementById('category-select')
+    const converterContent = document.getElementById('converter-content')
+
+    // Event listener for category selection
+    categorySelect.addEventListener('change', function () {
+        const selectedCategory = this.value
+
+        if (!selectedCategory) {
+            converterContent.innerHTML = '<p>Select a category to start converting</p>'
+            return
+        }
+
+        renderConverter(selectedCategory, converterContent)
+    })
+
+    // Initial message
+    converterContent.innerHTML = '<p>Select a category to start converting</p>'
+}
+
+// Render converter interface for selected category
+function renderConverter(category, container) {
+    const categoryData = conversions[category]
+
+    if (!categoryData) {
+        container.innerHTML = '<p>Category not found</p>'
+        return
     }
 
+    const units = categoryData.units
+    const unitsArray = Object.keys(units)
+
+    let html = `
+        <form class="converter-form">
+            <div class="input-group">
+                <label for="input-value">Value:</label>
+                <input type="number" id="input-value" placeholder="Enter value" value="1">
+            </div>
+            
+            <div class="input-group">
+                <label for="from-unit">From:</label>
+                <select id="from-unit">
+                    ${unitsArray.map(unit => `<option value="${unit}">${formatUnitName(unit)}</option>`).join('')}
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="to-unit">To:</label>
+                <select id="to-unit">
+                    ${unitsArray.map(unit => `<option value="${unit}">${formatUnitName(unit)}</option>`).join('')}
+                </select>
+            </div>
+            
+            <div class="result-group">
+                <p>Result: <span id="conversion-result">0</span> <span id="result-unit"></span></p>
+            </div>
+        </form>
+    `
+
+    container.innerHTML = html
+
+    // Get the newly created elements
+    const inputValue = document.getElementById('input-value')
+    const fromUnit = document.getElementById('from-unit')
+    const toUnit = document.getElementById('to-unit')
+    const resultSpan = document.getElementById('conversion-result')
+    const resultUnit = document.getElementById('result-unit')
+
+    // Set initial result unit
+    resultUnit.textContent = formatUnitName(toUnit.value)
+
+    // Function to perform conversion
+    const performConversion = () => {
+        if (category === 'temperature') {
+            const value = parseFloat(inputValue.value) || 0
+            const from = fromUnit.value
+            const to = toUnit.value
+            const result = units[from][`to${formatUnitName(to)}`](value)
+            
+            resultSpan.textContent = result.toFixed(6).replace(/\.?0+$/, '')
+            resultUnit.textContent = formatUnitName(to)
+        } else {
+            const value = parseFloat(inputValue.value) || 0
+            const from = fromUnit.value
+            const to = toUnit.value
+
+            // Convert to base unit first, then to target unit
+            const baseValue = value / units[from]
+            const result = baseValue * units[to]
+
+            resultSpan.textContent = result.toFixed(6).replace(/\.?0+$/, '')
+            resultUnit.textContent = formatUnitName(to)
+        }
+    }
+
+    // Add event listeners
+    inputValue.addEventListener('input', performConversion)
+    fromUnit.addEventListener('change', performConversion)
+    toUnit.addEventListener('change', performConversion)
+
+    // Initial conversion
+    performConversion()
+}
+
+// Utility function to format unit names (camelCase to Title Case)
+function formatUnitName(unitName) {
+    return unitName
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, str => str.toUpperCase())
+        .trim()
 }
