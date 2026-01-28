@@ -21,8 +21,17 @@ body {
 
 }
 
+header{
+    width: 100%;
+}
+
+#main-title{
+    text-align: center;
+    margin: 2%;
+}
+
 nav{
-    width: 90vw;
+    width: 100%;
 }
 
 nav ul{
@@ -46,7 +55,7 @@ nav a {
 
 #delete-btn {
     border: none;
-    background-color: white;
+    background: none;
     justify-content: end;
 }
 
@@ -128,4 +137,110 @@ footer {
     width: 60%;
     margin: 3%;
     padding: 10%;
+}
+
+/* Units Converter Styles */
+#section-container {
+    width: 90vw;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.converter-controls {
+    margin-bottom: 2rem;
+}
+
+.converter-controls label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: darkmagenta;
+}
+
+.converter-controls select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid darkmagenta;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.converter-content {
+    min-height: 200px;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.converter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-weight: bold;
+    color: darkmagenta;
+}
+
+.input-group input,
+.input-group select {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: darkmagenta;
+    box-shadow: 0 0 5px rgba(139, 0, 139, 0.3);
+}
+
+.result-group {
+    padding: 1rem;
+    background-color: #f0e6f0;
+    border-left: 4px solid darkmagenta;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: darkmagenta;
+}
+
+#conversion-result {
+    color: darkmagenta;
+    font-weight: bold;
+}
+
+.back-button {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.back-button a {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background-color: darkmagenta;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button a:hover {
+    background-color: rgb(100, 0, 100);
 }
