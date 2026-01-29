@@ -1,3 +1,7 @@
+// toDo Add unit symbol to each unit
+// toDo Add swap units button
+// toDo Manage when its necesary to round results
+
 // Object with all unit conversion ratios
 export const conversions = {
     length: {
@@ -112,6 +116,74 @@ export const conversions = {
                 toCelsius: (k) => k - 273.15,
                 toFahrenheit: (k) => (k - 273.15) * 9 / 5 + 32
             }
+        }
+    },
+    data: {
+        base: 'byte',
+        units: {
+            bytes: 1,
+            bits: 8,
+            nibbles: 2,
+            words: 0.5,
+            kilobits: 0.008,
+            kibibits: 0.007812,
+            kilobyte: 0.001,
+            kibibytes: 0.000977,
+            megabits: 0.000008,
+            mebibits: 0.000008,
+            megabytes: 0.000001,
+            mebibytes: 0.000000953674316,
+            gigabits: 0.000000008,
+            gibibits: 0.000000007450581,
+            gigabytes: 0.000000001,
+            gibibytes: 0.000000000931323,
+            terabytes: 0.000000000001,
+            tebibytes: 0.000000000000909,
+            petabytes: 1.000000e-15,
+            pebibytes: 8.881784e-16,
+            exabytes: 1.000000e-18,
+            exbibytes: 8.673617e-19,
+            zetabytes: 1.000000e-21,
+            zebibytes: 8.470329e-22,
+            yottabytes: 1.000000e-24,
+            yobibytes: 8.271806e-25
+        }
+    },
+    speed: {
+        base: 'kilometer per hour',
+        units: {
+            kilometersPerHour: 1,
+            milimetersPerSecond: 277.77778,
+            centimetersPerSecond: 27.77778,
+            centimetersPerHour: 100000,
+            metersPerSecond: 0.277778,
+            metersPerHour: 1000,
+            kilometersPerSecond: 0.000277778,
+            inchesPerSecond: 10.9361329834,
+            inchesPerHour: 39370.078740157,
+            feetsPerSecond: 0.9113444153,
+            feetsPerHour: 3280.8398950131,
+            milesPerSecond: 0.0001726031,
+            milesPerHour: 0.6213711922,
+            knots: 0.5399568035,
+            mach: 0.000816,
+            soundSpeed: 0.00080985,
+            lightSpeed: 9.26566932e-10
+        }
+    },
+    time: {
+        base: 'minute',
+        units: {
+            minutes: 1,
+            miliseconds: 60000,
+            seconds: 60,
+            hours: 0.016667,
+            days: 0.00069444,
+            weeks: 0.0000992063,
+            months: 0.0000228154,
+            years: 0.0000019013,
+            decades: 1.90130000e-7,
+            centurys: 1.90130000e-8,
         }
     }
 }

@@ -151,6 +151,9 @@ const pages = {
                     <option value="volume">Volume</option>
                     <option value="area">Area</option>
                     <option value="temperature">Temperature</option>
+                    <option value="data">Data</option>
+                    <option value="speed">Speed</option>
+                    <option value="time">Time</option>
                     <option value="nauticalUnits">Nautical units</option>
                     <option value="astronomicUnits">Astronomic units</option>
                 </select>
