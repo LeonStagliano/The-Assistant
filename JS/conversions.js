@@ -1,4 +1,5 @@
 // toDo Add unit symbol to each unit
+// toDo Change units order "from smallest to bigest"
 // toDo Add swap units button
 // toDo Manage when its necesary to round results
 
@@ -7,96 +8,96 @@ export const conversions = {
     length: {
         base: 'meters',
         units: {
+            nanometers: 1000000000,
+            micrometers: 1000000,
+            milimeters: 1000,
+            centimeters: 100,
             meters: 1,
             kilometers: 0.001,
-            centimeters: 100,
-            milimeters: 1000,
-            micrometers: 1000000,
-            nanometers: 1000000000,
-            miles: 0.00062137,
-            furlongs: 0.004971,
-            rods: 0.198839,
-            yards: 1.0936,
-            feets: 3.2808,
-            inches: 39.3701,
             mils: 39370.08,
+            inches: 39.3701,
+            feets: 3.2808,
+            yards: 1.0936,
+            rods: 0.198839,
+            furlongs: 0.004971,
+            miles: 0.00062137
         }
     },
     nauticalUnits: {
         base: 'nautical-miles',
         units: {
-            nauticalMiles: 1,
-            latitudeDegrees: 0.016666,
-            nauticalLeagues: 0.333333,
-            kilometers: 1.852,
             meters: 1852,
+            kilometers: 1.852,
+            fathoms: 1012.6859,
             cables: 10,
-            fathoms: 1012.6859
+            nauticalMiles: 1,
+            nauticalLeagues: 0.333333,
+            latitudeDegrees: 0.016666
         }
     },
     astronomicUnits: {
         base: 'astronomical-units',
         units: {
-            astronomicalUnits: 1,
-            parsecs: 0.0000048481, // 206266.8456 au = 1 pársec
-            lightYears: 0.0000158128, // 63241 au = 1 light year
-            lightMinutes: 8.32,
-            earthsCircumferences: 3732.94, // 40075.075 km = 1 earth's circumference,
-            moonDistances: 43052.2247, // 3474,8 km from earth
             kilometers: 149597870.7,
+            moonDistances: 43052.2247, // 3474,8 km from earth
+            earthsCircumferences: 3732.94, // 40075.075 km = 1 earth's circumference,
+            lightMinutes: 8.32,
+            astronomicalUnits: 1,
+            lightYears: 0.0000158128, // 63241 au = 1 light year
+            parsecs: 0.0000048481 // 206266.8456 au = 1 pársec
         }
     },
     mass: {
         base: 'kilograms',
         units: {
-            kilograms: 1,
-            longTons: 0.00098421,
-            tons: 0.001,
-            shortTons: 0.00110231,
-            hectograms: 10,
-            decagrams: 100,
-            grams: 1000,
-            carat: 5000,
-            decigrams: 10000,
-            centigrams: 100000,
             miligrams: 1000000,
-            stones: 0.157473,
+            centigrams: 100000,
+            decigrams: 10000,
+            grams: 1000,
+            decagrams: 100,
+            hectograms: 10,
+            kilograms: 1,
+            tons: 0.001,
+            carat: 5000,
+            ounces: 35.274,
             pounds: 2.2046,
-            ounces: 35.274
+            stones: 0.157473,
+            shortTons: 0.00110231,
+            longTons: 0.00098421
         }
     },
     volume: {
         base: 'cubic meter',
         units: {
+            cubicMilimeters: 1000000000,
+            cubicCentimeters: 1000000,
+            cubicDecimeters: 1000,
             cubicMeters: 1,
+            mililiters: 1000000,
+            centiliters: 100000,
+            deciliters: 10000,
+            liters: 1000,
+            cubicInches: 61023.76,
+            cubicFeets: 35.3147,
+            UKPints: 1759.75,
             UKGallons: 219.9692,
             USGallons: 264.172,
-            cubicDecimeters: 1000,
-            liters: 1000,
-            deciliters: 10000,
-            centiliters: 100000,
-            mililiters: 1000000,
-            cubicCentimeters: 1000000,
-            cubicMilimeters: 1000000000,
-            cubicFeets: 35.3147,
-            cubicInches: 61023.76,
-            UKBarrels: 6.1106,
-            UKPints: 1759.75,
+            UKBarrels: 6.1106
         }
     },
     area: {
         base: 'square meter',
         units: {
-            squareMeters: 1,
-            squareKilometers: 0.000001,
-            hectares: 0.0001,
-            acres: 0.0002471,
-            squareDecimeters: 100,
-            squareYards: 1.196,
-            squareFeets: 10.7639,
-            squareInches: 1550,
-            squareCentimeters: 10000,
             squareMilimeters: 1000000,
+            squareCentimeters: 10000,
+            squareDecimeters: 100,
+            squareMeters: 1,
+            hectares: 0.0001,
+            squareKilometers: 0.000001,
+            squareInches: 1550,
+            squareFeets: 10.7639,
+            squareYards: 1.196,
+            acres: 0.0002471
         }
     },
     temperature: {
@@ -121,9 +122,9 @@ export const conversions = {
     data: {
         base: 'byte',
         units: {
-            bytes: 1,
             bits: 8,
             nibbles: 2,
+            bytes: 1,
             words: 0.5,
             kilobits: 0.008,
             kibibits: 0.007812,
@@ -152,13 +153,13 @@ export const conversions = {
     speed: {
         base: 'kilometer per hour',
         units: {
-            kilometersPerHour: 1,
             milimetersPerSecond: 277.77778,
             centimetersPerSecond: 27.77778,
             centimetersPerHour: 100000,
             metersPerSecond: 0.277778,
             metersPerHour: 1000,
             kilometersPerSecond: 0.000277778,
+            kilometersPerHour: 1,
             inchesPerSecond: 10.9361329834,
             inchesPerHour: 39370.078740157,
             feetsPerSecond: 0.9113444153,
@@ -174,9 +175,9 @@ export const conversions = {
     time: {
         base: 'minute',
         units: {
-            minutes: 1,
             miliseconds: 60000,
             seconds: 60,
+            minutes: 1,
             hours: 0.016667,
             days: 0.00069444,
             weeks: 0.0000992063,
@@ -234,7 +235,7 @@ function renderConverter(category, container) {
                     ${unitsArray.map(unit => `<option value="${unit}">${formatUnitName(unit)}</option>`).join('')}
                 </select>
             </div>
-            
+            <button type="button" id="swap-units-btn">⇆</button>
             <div class="input-group">
                 <label for="to-unit">To:</label>
                 <select id="to-unit">
@@ -256,12 +257,13 @@ function renderConverter(category, container) {
     const toUnit = document.getElementById('to-unit')
     const resultSpan = document.getElementById('conversion-result')
     const resultUnit = document.getElementById('result-unit')
+    const swapBtn = document.getElementById('swap-units-btn')
 
     // Set initial result unit
     resultUnit.textContent = formatUnitName(toUnit.value)
 
     // Function to perform conversion
-    const performConversion = () => {
+    function performConversion() {
         if (category === 'temperature') {
             const value = parseFloat(inputValue.value) || 0
             const from = fromUnit.value
@@ -284,10 +286,19 @@ function renderConverter(category, container) {
         }
     }
 
+    function swapUnits() {
+        let firstUnit = fromUnit.value
+        fromUnit.value = toUnit.value
+        toUnit.value = firstUnit
+        performConversion()
+    }
+
     // Add event listeners
     inputValue.addEventListener('input', performConversion)
     fromUnit.addEventListener('change', performConversion)
     toUnit.addEventListener('change', performConversion)
+    swapBtn.addEventListener('click', swapUnits)
+
 
     // Initial conversion
     performConversion()

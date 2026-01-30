@@ -226,6 +226,17 @@ footer {
     font-weight: bold;
 }
 
+#swap-units-btn{
+    background: none;
+    padding: 3%;
+    font-size: 1.5rem;
+    transform: rotate(90deg);
+    align-self: center;
+    color: darkmagenta;
+    border-radius: 12%;
+    border-color: darkmagenta;
+}
+
 .back-button {
     margin-top: 2rem;
     text-align: center;
