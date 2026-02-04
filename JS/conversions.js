@@ -1,6 +1,6 @@
 // toDo Add unit symbol to each unit
-// toDo Change units order "from smallest to bigest"
-// toDo Add swap units button
+// // toDo Change units order "from smallest to bigest"
+// // toDo Add swap units button
 // toDo Manage when its necesary to round results
 
 // Object with all unit conversion ratios
@@ -8,19 +8,58 @@ export const conversions = {
     length: {
         base: 'meters',
         units: {
-            nanometers: 1000000000,
-            micrometers: 1000000,
-            milimeters: 1000,
-            centimeters: 100,
-            meters: 1,
-            kilometers: 0.001,
-            mils: 39370.08,
-            inches: 39.3701,
-            feets: 3.2808,
-            yards: 1.0936,
-            rods: 0.198839,
-            furlongs: 0.004971,
-            miles: 0.00062137
+            nanometers: {
+                symbol: 'nm',
+                value: 1000000000
+            },
+            micrometers: {
+                symbol: 'µm',
+                value: 1000000
+            },
+            milimeters: {
+                symbol: 'mm',
+                value: 1000
+            },
+            centimeters: {
+                symbol: 'cm',
+                value: 100
+            },
+            meters: {
+                symbol: 'm',
+                value: 1
+            },
+            kilometers: {
+                symbol: 'km',
+                value: 0.001
+            },
+            mils: {
+                symbol: 'mil',
+                value: 39370.08
+            },
+            inches: {
+                symbol: 'in',
+                value: 39.3701
+            },
+            feets: {
+                symbol: 'ft',
+                value: 3.2808
+            },
+            yards: {
+                symbol: 'yd',
+                value: 1.0936
+            },
+            rods: {
+                symbol: 'rod',
+                value: 0.198839
+            },
+            furlongs: {
+                symbol: 'fur',
+                value: 0.004971
+            },
+            miles: {
+                symbol: 'mi',
+                value: 0.00062137
+            }
         }
     },
     nauticalUnits: {
@@ -220,7 +259,8 @@ function renderConverter(category, container) {
     }
 
     const units = categoryData.units
-    const unitsArray = Object.keys(units)
+    const unitsNamesArray = Object.keys(units)
+    console.log(units)
 
     let html = `
         <form class="converter-form">
@@ -232,19 +272,19 @@ function renderConverter(category, container) {
             <div class="input-group">
                 <label for="from-unit">From:</label>
                 <select id="from-unit">
-                    ${unitsArray.map(unit => `<option value="${unit}">${formatUnitName(unit)}</option>`).join('')}
+                    ${unitsNamesArray.map(unit => `<option value="${unit}">(${units[unit].symbol}) - ${formatUnitName(unit)}</option>`).join('')}
                 </select>
             </div>
             <button type="button" id="swap-units-btn">⇆</button>
             <div class="input-group">
                 <label for="to-unit">To:</label>
                 <select id="to-unit">
-                    ${unitsArray.map(unit => `<option value="${unit}">${formatUnitName(unit)}</option>`).join('')}
+                    ${unitsNamesArray.map(unit => `<option value="${unit}">(${units[unit].symbol}) - ${formatUnitName(unit)}</option>`).join('')}
                 </select>
             </div>
             
             <div class="result-group">
-                <p>Result: <span id="conversion-result">0</span> <span id="result-unit"></span></p>
+                <p><span id="from-value"></span> <span id="from-unit-symbol"></span> = <span id="conversion-result">0</span> <span id="result-unit"></span></p>
             </div>
         </form>
     `
@@ -255,6 +295,8 @@ function renderConverter(category, container) {
     const inputValue = document.getElementById('input-value')
     const fromUnit = document.getElementById('from-unit')
     const toUnit = document.getElementById('to-unit')
+    const fromValue = document.getElementById('from-value')
+    const fromUnitSymbol = document.getElementById('from-unit-symbol')
     const resultSpan = document.getElementById('conversion-result')
     const resultUnit = document.getElementById('result-unit')
     const swapBtn = document.getElementById('swap-units-btn')
@@ -278,11 +320,13 @@ function renderConverter(category, container) {
             const to = toUnit.value
 
             // Convert to base unit first, then to target unit
-            const baseValue = value / units[from]
-            const result = baseValue * units[to]
+            const baseValue = value / units[from].value
+            const result = baseValue * units[to].value
 
+            fromValue.textContent = inputValue.value
+            fromUnitSymbol.textContent = units[from].symbol
             resultSpan.textContent = result.toFixed(6).replace(/\.?0+$/, '')
-            resultUnit.textContent = formatUnitName(to)
+            resultUnit.textContent = units[to].symbol // formatUnitName(to)
         }
     }
 
