@@ -65,44 +65,128 @@ export const conversions = {
     nauticalUnits: {
         base: 'nautical-miles',
         units: {
-            meters: 1852,
-            kilometers: 1.852,
-            fathoms: 1012.6859,
-            cables: 10,
-            nauticalMiles: 1,
-            nauticalLeagues: 0.333333,
-            latitudeDegrees: 0.016666
+            meters: {
+                symbol: 'm',
+                value: 1852
+            },
+            kilometers: {
+                symbol: 'km',
+                value: 1.852
+            },
+            fathoms: {
+                symbol: 'ftm',
+                value: 1012.6859
+            },
+            cables: {
+                symbol: 'cable',
+                value: 10
+            },
+            nauticalMiles: {
+                symbol: 'NM',
+                value: 1
+            },
+            nauticalLeagues: {
+                symbol: 'lea',
+                value: 0.333333
+            },
+            latitudeDegrees: {
+                symbol: 'φº',
+                value: 0.016666
+            }
         }
     },
     astronomicUnits: {
         base: 'astronomical-units',
         units: {
-            kilometers: 149597870.7,
-            moonDistances: 43052.2247, // 3474,8 km from earth
-            earthsCircumferences: 3732.94, // 40075.075 km = 1 earth's circumference,
-            lightMinutes: 8.32,
-            astronomicalUnits: 1,
-            lightYears: 0.0000158128, // 63241 au = 1 light year
-            parsecs: 0.0000048481 // 206266.8456 au = 1 pársec
+            kilometers: {
+                symbol: 'km',
+                value: 149597870.7
+            },
+            moonDistances: {
+                symbol: 'moonD',
+                value: 43052.2247 // 3474,8 km from earth
+            },
+            earthsCircumferences: {
+                symbol: 'earthC',
+                value: 3732.94 // 40075.075 km = 1 earth's circumference
+            },
+            lightMinutes: {
+                symbol: 'lm',
+                value: 8.32
+            },
+            astronomicalUnits: {
+                symbol: 'au',
+                value: 1
+            },
+            lightYears: {
+                symbol: 'ly',
+                value: 0.0000158128 // 63241 au = 1 light year
+            },
+            parsecs: {
+                symbol: 'pc',
+                value: 0.0000048481 // 206266.8456 au = 1 pársec
+            }
         }
     },
     mass: {
         base: 'kilograms',
         units: {
-            miligrams: 1000000,
-            centigrams: 100000,
-            decigrams: 10000,
-            grams: 1000,
-            decagrams: 100,
-            hectograms: 10,
-            kilograms: 1,
-            tons: 0.001,
-            carat: 5000,
-            ounces: 35.274,
-            pounds: 2.2046,
-            stones: 0.157473,
-            shortTons: 0.00110231,
-            longTons: 0.00098421
+            miligrams: {
+                symbol: 'mg',
+                value: 1000000
+            },
+            centigrams: {
+                symbol: 'cg',
+                value: 100000
+            },
+            decigrams: {
+                symbol: 'dg',
+                value: 10000
+            },
+            grams: {
+                symbol: 'g',
+                value: 1000
+            },
+            decagrams: {
+                symbol: 'dag',
+                value: 100
+            },
+            hectograms: {
+                symbol: 'hg',
+                value: 10
+            },
+            kilograms: {
+                symbol: 'kg',
+                value: 1
+            },
+            tons: {
+                symbol: 't',
+                value: 0.001
+            },
+            carat: {
+                symbol: 'ct',
+                value: 5000
+            },
+            ounces: {
+                symbol: 'oz',
+                value: 35.274
+            },
+            pounds: {
+                symbol: 'lb',
+                value: 2.2046
+            },
+            stones: {
+                symbol: 'st',
+                value: 0.157473
+            },
+            shortTons: {
+                symbol: 'shTn',
+                value: 0.00110231
+            },
+            longTons: {
+                symbol: 'loTn',
+                value: 0.00098421
+            }
         }
     },
     volume: {
@@ -311,7 +395,7 @@ function renderConverter(category, container) {
             const from = fromUnit.value
             const to = toUnit.value
             const result = units[from][`to${formatUnitName(to)}`](value)
-            
+
             resultSpan.textContent = result.toFixed(6).replace(/\.?0+$/, '')
             resultUnit.textContent = formatUnitName(to)
         } else {
