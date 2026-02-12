@@ -192,122 +192,362 @@ export const conversions = {
     volume: {
         base: 'cubic meter',
         units: {
-            cubicMilimeters: 1000000000,
-            cubicCentimeters: 1000000,
-            cubicDecimeters: 1000,
-            cubicMeters: 1,
-            mililiters: 1000000,
-            centiliters: 100000,
-            deciliters: 10000,
-            liters: 1000,
-            cubicInches: 61023.76,
-            cubicFeets: 35.3147,
-            UKPints: 1759.75,
-            UKGallons: 219.9692,
-            USGallons: 264.172,
-            UKBarrels: 6.1106
+            cubicMilimeters: {
+                symbol: 'mm³',
+                value: 1000000000
+            },
+            cubicCentimeters: {
+                symbol: 'cm³',
+                value: 1000000
+            },
+            cubicDecimeters: {
+                symbol: 'dm³',
+                value: 1000
+            },
+            cubicMeters: {
+                symbol: 'm³',
+                value: 1
+            },
+            mililiters: {
+                symbol: 'ml',
+                value: 1000000
+            },
+            centiliters: {
+                symbol: 'cl',
+                value: 100000
+            },
+            deciliters: {
+                symbol: 'dl',
+                value: 10000
+            },
+            liters: {
+                symbol: 'l',
+                value: 1000
+            },
+            cubicInches: {
+                symbol: 'in³',
+                value: 61023.76
+            },
+            cubicFeets: {
+                symbol: 'ft³',
+                value: 35.3147
+            },
+            UKPints: {
+                symbol: 'pt',
+                value: 1759.75
+            },
+            UKGallons: {
+                symbol: 'UKGal',
+                value: 219.9692
+            },
+            USGallons: {
+                symbol: 'USGal',
+                value: 264.172
+            },
+            UKBarrels: {
+                symbol: 'bbl',
+                value: 6.1106
+            }
         }
     },
     area: {
         base: 'square meter',
         units: {
-            squareMilimeters: 1000000,
-            squareCentimeters: 10000,
-            squareDecimeters: 100,
-            squareMeters: 1,
-            hectares: 0.0001,
-            squareKilometers: 0.000001,
-            squareInches: 1550,
-            squareFeets: 10.7639,
-            squareYards: 1.196,
-            acres: 0.0002471
+            squareMilimeters: {
+                symbol: 'mm²',
+                value: 1000000
+            },
+            squareCentimeters: {
+                symbol: 'cm²',
+                value: 10000
+            },
+            squareDecimeters: {
+                symbol: 'dm²',
+                value: 100
+            },
+            squareMeters: {
+                symbol: 'm²',
+                value: 1
+            },
+            hectares: {
+                symbol: 'ha',
+                value: 0.0001
+            },
+            squareKilometers: {
+                symbol: 'km²',
+                value: 0.000001
+            },
+            squareInches: {
+                symbol: 'in²',
+                value: 1550
+            },
+            squareFeets: {
+                symbol: 'ft²',
+                value: 10.7639
+            },
+            squareYards: {
+                symbol: 'yd²',
+                value: 1.196
+            },
+            acres: {
+                symbol: 'ac',
+                value: 0.0002471
+            }
         }
     },
     temperature: {
         units: {
             celsius: {
-                toCelsius: (c) => c,
-                toFahrenheit: (c) => (c * 9 / 5) + 32,
-                toKelvin: (c) => c + 273.15
+                symbol: '°C',
+                formulaes: {
+                    toCelsius: (c) => c,
+                    toFahrenheit: (c) => (c * 9 / 5) + 32,
+                    toKelvin: (c) => c + 273.15
+                }
             },
             fahrenheit: {
-                toFahrenheit: (f) => f,
-                toCelsius: (f) => (f - 32) * 5 / 9,
-                toKelvin: (f) => (f - 32) * 5 / 9 + 273.15
+                symbol: '°F',
+                formulaes: {
+                    toFahrenheit: (f) => f,
+                    toCelsius: (f) => (f - 32) * 5 / 9,
+                    toKelvin: (f) => (f - 32) * 5 / 9 + 273.15
+                }
             },
             kelvin: {
-                toKelvin: (k) => k,
-                toCelsius: (k) => k - 273.15,
-                toFahrenheit: (k) => (k - 273.15) * 9 / 5 + 32
+                symbol: 'K',
+                formulaes: {
+                    toKelvin: (k) => k,
+                    toCelsius: (k) => k - 273.15,
+                    toFahrenheit: (k) => (k - 273.15) * 9 / 5 + 32
+                }
             }
         }
     },
     data: {
         base: 'byte',
         units: {
-            bits: 8,
-            nibbles: 2,
-            bytes: 1,
-            words: 0.5,
-            kilobits: 0.008,
-            kibibits: 0.007812,
-            kilobyte: 0.001,
-            kibibytes: 0.000977,
-            megabits: 0.000008,
-            mebibits: 0.000008,
-            megabytes: 0.000001,
-            mebibytes: 0.000000953674316,
-            gigabits: 0.000000008,
-            gibibits: 0.000000007450581,
-            gigabytes: 0.000000001,
-            gibibytes: 0.000000000931323,
-            terabytes: 0.000000000001,
-            tebibytes: 0.000000000000909,
-            petabytes: 1.000000e-15,
-            pebibytes: 8.881784e-16,
-            exabytes: 1.000000e-18,
-            exbibytes: 8.673617e-19,
-            zetabytes: 1.000000e-21,
-            zebibytes: 8.470329e-22,
-            yottabytes: 1.000000e-24,
-            yobibytes: 8.271806e-25
+            bits: {
+                symbol: 'b',
+                value: 8
+            },
+            nibbles: {
+                symbol: 'nibble',
+                value: 2
+            },
+            bytes: {
+                symbol: 'B',
+                value: 1
+            },
+            words: {
+                symbol: 'word',
+                value: 0.5
+            },
+            kilobits: {
+                symbol: 'Kb',
+                value: 0.008
+            },
+            kibibits: {
+                symbol: 'Kib',
+                value: 0.007812
+            },
+            kilobyte: {
+                symbol: 'KB',
+                value: 0.001
+            },
+            kibibytes: {
+                symbol: 'KiB',
+                value: 0.000977
+            },
+            megabits: {
+                symbol: 'Mb',
+                value: 0.000008
+            },
+            mebibits: {
+                symbol: 'Mib',
+                value: 0.000008
+            },
+            megabytes: {
+                symbol: 'MB',
+                value: 0.000001
+            },
+            mebibytes: {
+                symbol: 'MiB',
+                value: 0.000000953674316
+            },
+            gigabits: {
+                symbol: 'Gb',
+                value: 0.000000008
+            },
+            gibibits: {
+                symbol: 'Gib',
+                value: 0.000000007450581
+            },
+            gigabytes: {
+                symbol: 'GB',
+                value: 0.000000001
+            },
+            gibibytes: {
+                symbol: 'GiB',
+                value: 0.000000000931323
+            },
+            terabytes: {
+                symbol: 'TB',
+                value: 0.000000000001
+            },
+            tebibytes: {
+                symbol: 'TiB',
+                value: 0.000000000000909
+            },
+            petabytes: {
+                symbol: 'PB',
+                value: 1.000000e-15
+            },
+            pebibytes: {
+                symbol: 'PiB',
+                value: 8.881784e-16
+            },
+            exabytes: {
+                symbol: 'EB',
+                value: 1.000000e-18
+            },
+            exbibytes: {
+                symbol: 'EiB',
+                value: 8.673617e-19
+            },
+            zetabytes: {
+                symbol: 'ZB',
+                value: 1.000000e-21
+            },
+            zebibytes: {
+                symbol: 'ZiB',
+                value: 8.470329e-22
+            },
+            yottabytes: {
+                symbol: 'YB',
+                value: 1.000000e-24
+            },
+            yobibytes: {
+                symbol: 'YiB',
+                value: 8.271806e-25
+            }
         }
     },
     speed: {
         base: 'kilometer per hour',
         units: {
-            milimetersPerSecond: 277.77778,
-            centimetersPerSecond: 27.77778,
-            centimetersPerHour: 100000,
-            metersPerSecond: 0.277778,
-            metersPerHour: 1000,
-            kilometersPerSecond: 0.000277778,
-            kilometersPerHour: 1,
-            inchesPerSecond: 10.9361329834,
-            inchesPerHour: 39370.078740157,
-            feetsPerSecond: 0.9113444153,
-            feetsPerHour: 3280.8398950131,
-            milesPerSecond: 0.0001726031,
-            milesPerHour: 0.6213711922,
-            knots: 0.5399568035,
-            mach: 0.000816,
-            soundSpeed: 0.00080985,
-            lightSpeed: 9.26566932e-10
+            milimetersPerSecond: {
+                symbol: 'mm/s',
+                value: 277.77778
+            },
+            centimetersPerSecond: {
+                symbol: 'cm/s',
+                value: 27.77778
+            },
+            centimetersPerHour: {
+                symbol: 'cm/h',
+                value: 100000
+            },
+            metersPerSecond: {
+                symbol: 'm/s',
+                value: 0.277778
+            },
+            metersPerHour: {
+                symbol: 'm/h',
+                value: 1000
+            },
+            kilometersPerSecond: {
+                symbol: 'km/s',
+                value: 0.000277778
+            },
+            kilometersPerHour: {
+                symbol: 'km/h',
+                value: 1
+            },
+            inchesPerSecond: {
+                symbol: 'in/s',
+                value: 10.9361329834
+            },
+            inchesPerHour: {
+                symbol: 'in/h',
+                value: 39370.078740157
+            },
+            feetsPerSecond: {
+                symbol: 'ft/s',
+                value: 0.9113444153
+            },
+            feetsPerHour: {
+                symbol: 'ft/h',
+                value: 3280.8398950131
+            },
+            milesPerSecond: {
+                symbol: 'mps',
+                value: 0.0001726031
+            },
+            milesPerHour: {
+                symbol: 'mph',
+                value: 0.6213711922
+            },
+            knots: {
+                symbol: 'kn',
+                value: 0.5399568035
+            },
+            mach: {
+                symbol: 'M',
+                value: 0.000816
+            },
+            soundSpeed: {
+                symbol: 'soundSp',
+                value: 0.00080985
+            },
+            lightSpeed: {
+                symbol: 'lightSp',
+                value: 9.26566932e-10
+            }
         }
     },
     time: {
         base: 'minute',
         units: {
-            miliseconds: 60000,
-            seconds: 60,
-            minutes: 1,
-            hours: 0.016667,
-            days: 0.00069444,
-            weeks: 0.0000992063,
-            months: 0.0000228154,
-            years: 0.0000019013,
-            decades: 1.90130000e-7,
-            centurys: 1.90130000e-8,
+            miliseconds: {
+                symbol: 'ms',
+                value: 60000
+            },
+            seconds: {
+                symbol: 's',
+                value: 60
+            },
+            minutes: {
+                symbol: 'm',
+                value: 1
+            },
+            hours: {
+                symbol: 'h',
+                value: 0.016667
+            },
+            days: {
+                symbol: 'd',
+                value: 0.00069444
+            },
+            weeks: {
+                symbol: 'w',
+                value: 0.0000992063
+            },
+            months: {
+                symbol: 'm',
+                value: 0.0000228154
+            },
+            years: {
+                symbol: 'y',
+                value: 0.0000019013
+            },
+            decades: {
+                symbol: 'dec',
+                value: 1.90130000e-7
+            },
+            centurys: {
+                symbol: 'C',
+                value: 1.90130000e-8
+            }
         }
     }
 }
@@ -356,14 +596,14 @@ function renderConverter(category, container) {
             <div class="input-group">
                 <label for="from-unit">From:</label>
                 <select id="from-unit">
-                    ${unitsNamesArray.map(unit => `<option value="${unit}">(${units[unit].symbol}) - ${formatUnitName(unit)}</option>`).join('')}
+                    ${unitsNamesArray.map(unit => `<option value="${unit}">( ${units[unit].symbol} ) - ${formatUnitName(unit)}</option>`).join('')}
                 </select>
             </div>
             <button type="button" id="swap-units-btn">⇆</button>
             <div class="input-group">
                 <label for="to-unit">To:</label>
                 <select id="to-unit">
-                    ${unitsNamesArray.map(unit => `<option value="${unit}">(${units[unit].symbol}) - ${formatUnitName(unit)}</option>`).join('')}
+                    ${unitsNamesArray.map(unit => `<option value="${unit}">( ${units[unit].symbol} ) - ${formatUnitName(unit)}</option>`).join('')}
                 </select>
             </div>
             
@@ -394,7 +634,7 @@ function renderConverter(category, container) {
             const value = parseFloat(inputValue.value) || 0
             const from = fromUnit.value
             const to = toUnit.value
-            const result = units[from][`to${formatUnitName(to)}`](value)
+            const result = units[from].formulaes[`to${formatUnitName(to)}`](value)
 
             resultSpan.textContent = result.toFixed(6).replace(/\.?0+$/, '')
             resultUnit.textContent = formatUnitName(to)
