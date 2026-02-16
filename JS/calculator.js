@@ -23,7 +23,7 @@ It stores a history of operations and results, and also includes a units convert
 // // Toggle History/Numpad Button Icon
 // // Toggle Anchor href
 // // Reverts to Numpad when click on same button
-// Units Converter
+// // Units Converter
 // Equation cursor
 // Scientist calculator
 
@@ -48,7 +48,6 @@ let db
 let isHistoryDisplayed = false
 
 export function initCalculator() {
-    // Get DOM elements when the function is called
     equationDisplay = document.getElementById('equation-display')
     partialResult = document.getElementById('partial-result')
     calculatorKeys = document.querySelector('.calculator-keys')
@@ -272,7 +271,6 @@ function recordOperation(equation, result) {
         console.log('It was not possible to register the transaction')
     }
 }
-// Display history in the numpad area
 function displayHistory() {
     numpad.style.display = 'none'
     historyContainer.style.display = 'grid'
@@ -319,9 +317,9 @@ function displayHistory() {
             operationResult.textContent = `=${cursor.value.result}`
 
             operation.setAttribute('operation-id', cursor.value.id)
-            operationValue.addEventListener('click', recoverHistory)
-            operationResult.addEventListener('click', recoverHistory)
-            deleteOperationBtn.addEventListener('click', deleteOperation)
+            operationValue.addEventListener('click', recoverHistoricValue)
+            operationResult.addEventListener('click', recoverHistoricValue)
+            deleteOperationBtn.addEventListener('click', deleteHistoricOperation)
 
             cursor.continue()
         } else {
@@ -342,8 +340,7 @@ function displayHistory() {
     historyContainer.appendChild(clearHistoryBtn)
     clearHistoryBtn.addEventListener('click', clearHistory)
 }
-// Removes an operation from the history-list
-function deleteOperation(event) {
+function deleteHistoricOperation(event) {
     const operationElement = event.target.closest('[operation-id]')
     if (!operationElement) return
 
@@ -372,8 +369,7 @@ function clearHistory() {
     console.log('The history has been cleared')
     displayHistory()
 }
-// Recovers an historic value to use it again
-function recoverHistory(event) {
+function recoverHistoricValue(event) {
     let historicValue = event.target.textContent
     // Checks if the last number in the equation and the first number in the historical value have decimal points
     if (verifyDecimalPoints(equationDisplay.value) && verifyDecimalPoints(historicValue, true)) return  // Prevents multiple decimal points
@@ -393,7 +389,6 @@ function displayNumpad() {
     isHistoryDisplayed = false
 }
 
-// Returns a valid partial result or '' if invalid
 function verifyPartialResult(equation) {
     let result = compute(equation)
     if (isNaN(result)) {
@@ -401,7 +396,6 @@ function verifyPartialResult(equation) {
     }
     return result
 }
-// Updates the partial result on partialResult
 const updatePartialResult = () => {
     partialResult.value = verifyPartialResult(equationDisplay.value)
 }
@@ -409,7 +403,7 @@ const updatePartialResult = () => {
 function manageBrackets(equation, key) {
     const lastChar = equation.slice(-1)
 
-    if (equation === '-') return '(-' // If the operation starts with an unary minus sign, it's moved inside a new bracket 
+    if (equation === '-') return '(-'
 
     const opens = (equation.match(/\(/g) || []).length
     const closes = (equation.match(/\)/g) || []).length
@@ -502,41 +496,41 @@ function invertSign(equation) {
 // Computes the whole operation following maths hierarchy
 function compute(equation) {
     // Splits the operation string in tokens of numbers (integers or decimals), operators and brackets
-    let equationSplitted = tokenize(equation)
+    let equation = tokenize(equation)
 
     // Computes all brackets (even the nested ones) until it obtains an operation without them
-    while (equationSplitted.includes('(') && equationSplitted.includes(')')) {
-        const prev = equationSplitted.join(',')
-        equationSplitted = resolveBrackets(equationSplitted)
+    while (equation.includes('(') && equation.includes(')')) {
+        const prev = equation.join(',')
+        equation = resolveBrackets(equation)
         // Progress condition to prevent an infinite loop - If there is no progress in iteration, a warning is displayed in console
-        if (equationSplitted.join(',') === prev) {
+        if (equation.join(',') === prev) {
             console.warn('No more brackets could be computed - Preventing an infinite loop')
             break
         }
     }
     // Computes the whole operation, by dividing it into terms and solving them
-    equationSplitted = calculate(equationSplitted)
+    equation = calculate(equation)
 
     // Parses the result and formats it using fixed-point notation
-    equationSplitted = parseFloat(equationSplitted).toPrecision(10)
+    equation = parseFloat(equation).toPrecision(10)
 
     // Removes the leading and trailing zeros, and decimal points if there are no decimals
-    equationSplitted = equationSplitted.toString()
-    if (equationSplitted.includes('.')) {
-        equationSplitted = equationSplitted.split('') // Splits the result into individual characters
-        while (equationSplitted[equationSplitted.length - 1] == 0) {
-            equationSplitted.pop() // Removes trailing zeros
+    equation = equation.toString()
+    if (equation.includes('.')) {
+        equation = equation.split('')
+        while (equation[equation.length - 1] == 0) {
+            equation.pop() // Removes trailing zeros
         }
-        if (equationSplitted[equationSplitted.length - 1] === '.') {
-            equationSplitted.pop() // Removes decimal points when there are no decimals
+        if (equation[equation.length - 1] === '.') {
+            equation.pop() // Removes decimal points when there are no decimals
         }
-        while (equationSplitted[0] == 0 && equationSplitted[1] != '.') {
-            equationSplitted.shift() // Removes leading zeros
+        while (equation[0] == 0 && equation[1] != '.') {
+            equation.shift() // Removes leading zeros
         }
-        equationSplitted = equationSplitted.join('')
+        equation = equation.join('')
     }
 
-    return equationSplitted // Returns the final result
+    return equation
 }
 // Splits operationScreen.value into tokens of numbers, parentheses and operators
 function tokenize(equation) {
@@ -547,7 +541,7 @@ function tokenize(equation) {
     // Checks if any '-' acts as a unary minus, and binds it to its number
     const tokensArray = []
     for (let i = 0; i < rawTokens.length; i++) {
-        const token = rawTokens[i] // Iteration's current element
+        const token = rawTokens[i]
 
         // If it acts as a unary minus, begining the operation or parentheses, or after an operator 
         if (token === '-' && (i === 0 || /[+\-*/(]/.test(rawTokens[i - 1]))) {
@@ -564,10 +558,8 @@ function tokenize(equation) {
     }
     return tokensArray
 }
-// Returns true if the last number has a decimal point
 function verifyDecimalPoints(equation, fromBegin) {
-    const tokensArray = tokenize(equation) // Splits the operation into tokens
-    // Checks from the begining of equation
+    const tokensArray = tokenize(equation)
     if (fromBegin){
         for (let i = 0; i < tokensArray.length; i++) {
         const token = tokensArray[i]
@@ -663,7 +655,6 @@ function resolveBrackets(equation) {
     // Returns the operation updated with bracket result
     return equation.slice(0, openIndex).concat(bracketArray).concat(equation.slice(closeIndex + 1))
 }
-// Selects the correct operation and solves it depending on the incoming operator
 function selectOperation(equation) {
     if (equation[0] === '-') return // Prevents an error when there is only a unary minus
     let operator = equation[1]
@@ -678,5 +669,5 @@ function selectOperation(equation) {
 
     const x = parseFloat(equation[0])
     const y = parseFloat(equation[2])
-    return operation(x, y) // Returns the operation result
+    return operation(x, y)
 }
