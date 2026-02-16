@@ -1,6 +1,8 @@
 import { initCalculator } from "./calculator.js"
 import { initConverter } from "./units-converter.js"
 
+// Simple SPA Router using History API.
+// Responsible only for route registration and rendering.
 class Router {
     constructor() {
         this.routes = {},
@@ -8,13 +10,13 @@ class Router {
             this.init()
     }
 
-    register(path, component) {
-        this.routes[path] = component
+    register(path, component, onMount = null) {
+        this.routes[path] = {component, onMount} 
         return this
     }
 
     navigate(path) {
-        if (this.currentRoute === path) return // Prevents unnecesary renders
+        if (this.currentRoute === path) return // Avoid re-rendering the same route to prevent unnecessary DOM operations
 
         // HISTORY API - Para deploy con URLs limpias (descomenta en prod)
         history.pushState(null, null, path)
@@ -27,18 +29,16 @@ class Router {
 
     render(path) {
         const app = document.getElementById('app')
-        const component = this.routes[path] || this.routes['/404']
+        const route = this.routes[path] || this.routes['/404']
 
-        if (component) {
+        if (route) {
             app.innerHTML = ''
-            const element = component()
+            const element = route.component()
             if (element) {
                 app.appendChild(element)
+                route.onMount?.()
             }
             this.currentRoute = path
-
-            if (path === '/calculator') initCalculator()
-            if (path === '/units-converter') initConverter()
         }
     }
 
@@ -201,8 +201,8 @@ const pages = {
 
 const router = new Router()
     .register('/home', pages.home)
-    .register('/calculator', pages.calculator)
-    .register('/units-converter', pages.unitsConverter)
+    .register('/calculator', pages.calculator, initCalculator)
+    .register('/units-converter', pages.unitsConverter, initConverter)
     .register('/notes', pages.notes)
     .register('/calendar', pages.calendar)
     .register('/timer', pages.timer)
