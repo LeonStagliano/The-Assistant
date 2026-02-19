@@ -298,6 +298,9 @@ function displayHistory() {
 
             operation.classList.add('history-operation')
             operationContainer.classList.add('operation-container')
+            operationValue.classList.add('operation-value')
+            operationResult.classList.add('operation-value', 'result')
+            deleteOperationBtn.classList.add('delete-btn')
             deleteOperationIcon.setAttribute('src', './assets/img/trash icon.png')
             deleteOperationIcon.setAttribute('alt', 'Delete icon')
             // toDo Move this style to CSS
