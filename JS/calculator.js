@@ -301,6 +301,7 @@ function displayHistory() {
             operationValue.classList.add('operation-value')
             operationResult.classList.add('operation-value', 'result')
             deleteOperationBtn.classList.add('delete-btn')
+            deleteOperationIcon.classList.add('delete-icon')
             deleteOperationIcon.setAttribute('src', './assets/img/trash icon.png')
             deleteOperationIcon.setAttribute('alt', 'Delete icon')
             // toDo Move this style to CSS
