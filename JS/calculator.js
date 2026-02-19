@@ -496,41 +496,41 @@ function invertSign(equation) {
 // Computes the whole operation following maths hierarchy
 function compute(equation) {
     // Splits the operation string in tokens of numbers (integers or decimals), operators and brackets
-    let equation = tokenize(equation)
+    let tokenizedEquation = tokenize(equation)
 
     // Computes all brackets (even the nested ones) until it obtains an operation without them
-    while (equation.includes('(') && equation.includes(')')) {
-        const prev = equation.join(',')
-        equation = resolveBrackets(equation)
+    while (tokenizedEquation.includes('(') && tokenizedEquation.includes(')')) {
+        const prev = tokenizedEquation.join(',')
+        tokenizedEquation = resolveBrackets(tokenizedEquation)
         // Progress condition to prevent an infinite loop - If there is no progress in iteration, a warning is displayed in console
-        if (equation.join(',') === prev) {
+        if (tokenizedEquation.join(',') === prev) {
             console.warn('No more brackets could be computed - Preventing an infinite loop')
             break
         }
     }
     // Computes the whole operation, by dividing it into terms and solving them
-    equation = calculate(equation)
+    tokenizedEquation = calculate(tokenizedEquation)
 
     // Parses the result and formats it using fixed-point notation
-    equation = parseFloat(equation).toPrecision(10)
+    tokenizedEquation = parseFloat(tokenizedEquation).toPrecision(10)
 
     // Removes the leading and trailing zeros, and decimal points if there are no decimals
-    equation = equation.toString()
-    if (equation.includes('.')) {
-        equation = equation.split('')
-        while (equation[equation.length - 1] == 0) {
-            equation.pop() // Removes trailing zeros
+    tokenizedEquation = tokenizedEquation.toString()
+    if (tokenizedEquation.includes('.')) {
+        tokenizedEquation = tokenizedEquation.split('')
+        while (tokenizedEquation[tokenizedEquation.length - 1] == 0) {
+            tokenizedEquation.pop() // Removes trailing zeros
         }
-        if (equation[equation.length - 1] === '.') {
-            equation.pop() // Removes decimal points when there are no decimals
+        if (tokenizedEquation[tokenizedEquation.length - 1] === '.') {
+            tokenizedEquation.pop() // Removes decimal points when there are no decimals
         }
-        while (equation[0] == 0 && equation[1] != '.') {
-            equation.shift() // Removes leading zeros
+        while (tokenizedEquation[0] == 0 && tokenizedEquation[1] != '.') {
+            tokenizedEquation.shift() // Removes leading zeros
         }
-        equation = equation.join('')
+        tokenizedEquation = tokenizedEquation.join('')
     }
 
-    return equation
+    return tokenizedEquation
 }
 // Splits operationScreen.value into tokens of numbers, parentheses and operators
 function tokenize(equation) {
