@@ -304,11 +304,6 @@ function displayHistory() {
             deleteOperationIcon.classList.add('delete-icon')
             deleteOperationIcon.setAttribute('src', './assets/img/trash icon.png')
             deleteOperationIcon.setAttribute('alt', 'Delete icon')
-            // toDo Move this style to CSS
-            deleteOperationBtn.style.width = '20%'
-            deleteOperationBtn.style.background = 'none'
-            deleteOperationBtn.style.border = 'none'
-            deleteOperationIcon.style.width = '70%'
 
             operationContainer.appendChild(operationValue)
             operationContainer.appendChild(operationResult)
