@@ -65,14 +65,13 @@ nav a {
     max-height: 25vh;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-rows: repeat(9, 1fr);
+    gap: 2%;
 }
 
 .parentheses-buttons {
     display: flex;
     justify-content: space-between;
-    gap: 7%;
 }
 
 .parentheses-buttons > button {
@@ -83,7 +82,7 @@ nav a {
     grid-area: 2 / 1 / span 4 / span 3;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 2%;
 }
 
 .key {
@@ -120,6 +119,25 @@ footer {
     justify-content: space-between;
     border: 1px solid black;
     padding: 1%;
+}
+
+.operation-value{
+    word-break: break-all;
+}
+
+.delete-btn{
+    width: 20%;
+    background: none;
+    border: none;
+}
+
+.result{
+    color: darkmagenta;
+    font-weight: bold;
+}
+
+.delete-icon{
+    width: 70%;
 }
 
 #clear-history-btn {
